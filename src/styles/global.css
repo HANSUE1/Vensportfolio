@@ -57,6 +57,10 @@ body {
 body[data-background='dots'] {
   background: #fff radial-gradient(circle at 10px 10px, #ccc 0 1.25px, transparent 1.75px) 0 0 / 32px 32px;
 }
+/* Interactive WebGL dot grid: fixed behind all content, replaces the CSS dots once it runs */
+.dot-grid { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+.dot-grid__canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; pointer-events: none; }
+html.has-dotgrid body[data-background='dots'] { background: #fff; }
 body[data-background='paper'] { background: #fafafa var(--paper-texture) 0 0 / 600px 600px; }
 
 /* Crumpled-paper texture, generated with SVG lighting (no image file) */
@@ -210,6 +214,7 @@ html.ldr-out .ldr { animation: ldr-out 0.7s cubic-bezier(0.76, 0, 0.24, 1) forwa
 .magnetic__face img, .magnetic__hover img { width: 100%; height: 100%; object-fit: cover; }
 .magnetic__face img { filter: grayscale(1) contrast(1.05); mix-blend-mode: multiply; }
 .magnetic__hover { background: #ece6ff; transform: scale(0.01); transition: transform 0.5s var(--ease-out); }
+@media (hover: none) { .magnetic__hover { transform: none; } }
 .magnetic__word { font-family: var(--font-script); font-size: clamp(2.25rem, 5vw, 4.75rem); line-height: 1.6; color: #b0346a; rotate: -8deg; }
 .magnetic__hover .magnetic__word { color: #4b2bd1; }
 .magnetic__ring { position: absolute; inset: 8%; border: 2px dashed currentColor; border-radius: 50%; color: #b0346a; opacity: 0.35; }

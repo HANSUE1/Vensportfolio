@@ -41,13 +41,21 @@ Every card shows generated art until a photo is added. Drop files into `public/`
 
 | File | Where it appears |
 |---|---|
-| `public/portrait.jpg` | Home hero circle and About page |
+| `public/portrait-circle.jpg` | Home hero circle (square) |
+| `public/portrait.jpg` | About page (4:5) |
 | `public/candid.jpg` | Small dashed photo on the About page |
 | `public/work/<slug>.jpg` | A case-study card and its cover, e.g. `work/literacy-tutor.jpg` |
 | `public/work/literacy-tutor-2.jpg`, `-3.jpg` | The two small tiles in the "Currently" panel |
 | `public/work/<leadership-id>.jpg` | Leadership cards, e.g. `work/class-secretary.jpg` |
 
 Blur or crop out children's faces unless you have consent.
+
+## Background
+
+The dotted background on Works, Leadership, Learning and case-study pages is an interactive WebGL dot grid
+(`src/scripts/dotgrid.js`, ported from the React Bits `<DotGrid />` component to plain JavaScript). Dots light up
+orange near the cursor and ripple out from clicks. Tweak colors, size and spacing in `initDotGrid()` in
+`src/scripts/site.ts`. Browsers without WebGL2 fall back to the static CSS dots.
 
 ## Motion and accessibility
 

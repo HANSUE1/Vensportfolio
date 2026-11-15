@@ -14,7 +14,7 @@ const bySlug = Object.fromEntries(works.map((w) => [w.slug, w]));
 const current = bySlug['literacy-tutor'];
 const workHref = (slug: string) => url(`work/${slug}/`);
 const leadHref = (id: string) => url(`leadership/#${id}`);
-const hasPortrait = hasPublic('portrait.jpg');
+const hasPortrait = hasPublic('portrait-circle.jpg');
 
 const fieldStudy = bySlug['field-study-teacher'];
 const writing = bySlug['research-and-publication'];
@@ -46,13 +46,13 @@ const gallery = [
         {profile.first} {profile.last} is a <span class="hero__bold">Pre-service English teacher</span> based out of {profile.location}. Currently studying <span class="hero__bold">English Education</span> at <span class="hero__bold">PNU-Manila</span>
       </h1>
       <div class="hero__circle" data-hero>
-        <a class="magnetic" href={url('about/')} data-magnetic data-cursor-label="Say hi" aria-label="About Venelle">
+        <a class="magnetic" href={url('about/')} data-magnetic aria-label="About Venelle">
           <span class="magnetic__face">
-            {hasPortrait ? <img src={url('portrait.jpg')} alt="" /> : <span class="magnetic__word">hello!</span>}
+            {hasPortrait ? <img src={url('portrait-circle.jpg')} alt={`Portrait of ${profile.first} ${profile.last}`} width="840" height="840" fetchpriority="high" /> : <span class="magnetic__word">hello!</span>}
             <span class="magnetic__ring"></span>
           </span>
           <span class="magnetic__hover">
-            {hasPortrait ? <img src={url('portrait.jpg')} alt="" /> : <span class="magnetic__word">kumusta!</span>}
+            {hasPortrait ? <img src={url('portrait-circle.jpg')} alt="" width="840" height="840" /> : <span class="magnetic__word">kumusta!</span>}
           </span>
         </a>
       </div>

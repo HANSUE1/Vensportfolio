@@ -64,6 +64,9 @@ const nav = [
     </script>
   </head>
   <body data-background={background}>
+    {background === 'dots' && (
+      <div class="dot-grid" aria-hidden="true"><canvas class="dot-grid__canvas" data-dotgrid></canvas></div>
+    )}
     <a class="skip" href="#main">Skip to content</a>
 
     <header class="site-header" data-header>

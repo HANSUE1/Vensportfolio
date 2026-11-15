@@ -1,5 +1,6 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { createDotGrid } from './dotgrid.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -8,6 +9,7 @@ const root = document.documentElement;
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
 const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
 
+initDotGrid();
 initMenu();
 initCopy();
 initLearningFilter();
@@ -23,6 +25,33 @@ if (!reduced.matches) {
 } else {
   root.classList.remove('ldr-on');
   document.querySelectorAll('[data-reveal]').forEach((el) => el.setAttribute('data-revealed', ''));
+}
+
+/* ───────── Interactive dot-grid background (falls back to the CSS dots without WebGL2) ───────── */
+function initDotGrid() {
+  const canvas = document.querySelector<HTMLCanvasElement>('[data-dotgrid]');
+  if (!canvas) return;
+  const destroy = createDotGrid(canvas, {
+    baseColor: '#cccccc',
+    activeColor: '#ff4c00',
+    shape: 'circle',
+    dotSize: 3,
+    gap: 29,
+    proximity: 140,
+    strength: 0.5,
+    bounce: 0.3,
+    tension: 0.4,
+    returnDuration: 1.4,
+    shockRadius: 320,
+    shockStrength: 5,
+    swell: 0.6,
+    stretch: 0.2,
+    glow: 0.25,
+    fade: 0,
+    intro: true,
+  });
+  if (destroy) root.classList.add('has-dotgrid');
+  else canvas.parentElement?.remove();
 }
 
 /* ───────── Mobile menu ───────── */
