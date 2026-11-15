@@ -10,4 +10,6 @@ const site = process.env.SITE || process.env.URL || (vercel ? `https://${vercel}
 export default defineConfig({
   site,
   base: process.env.BASE_PATH || '/',
+  // The dev toolbar overlays hover tooltips on the page during `npm run dev`; off for a clean preview.
+  devToolbar: { enabled: false },
 });

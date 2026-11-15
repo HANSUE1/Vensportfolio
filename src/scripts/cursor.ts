@@ -18,6 +18,7 @@ export function initCursor() {
   box.setAttribute('data-active', '');
   root.setAttribute('data-custom-cursor', '');
 
+  const TRAIL_MS = 180; // how long the trail lingers behind the pointer
   const COLORS = ['#ff4c00', '#ff7a2f', '#ffb347', '#ffd66e', '#fff3c4'];
   // Only real links get the ring; static covers (e.g. Leadership) keep the plain dot.
   const TARGETS = '[data-cursor-label], a.project-card__image, .gallery__tile';
@@ -45,13 +46,13 @@ export function initCursor() {
     let busy = false;
 
     // Trail: fading line segments behind the pointer
-    while (trail.length && now - trail[0].t > 300) trail.shift();
+    while (trail.length && now - trail[0].t > TRAIL_MS) trail.shift();
     if (trail.length > 1) {
       ctx!.lineCap = 'round';
       for (let i = 1; i < trail.length; i++) {
-        const k = 1 - (now - trail[i].t) / 300;
-        ctx!.strokeStyle = `rgba(255, ${Math.round(150 + 70 * (1 - k))}, ${Math.round(70 + 70 * (1 - k))}, ${0.5 * k * k})`;
-        ctx!.lineWidth = 0.5 + 3.3 * k;
+        const k = 1 - (now - trail[i].t) / TRAIL_MS;
+        ctx!.strokeStyle = `rgba(255, ${Math.round(150 + 70 * (1 - k))}, ${Math.round(70 + 70 * (1 - k))}, ${0.35 * k * k})`;
+        ctx!.lineWidth = 0.5 + 2.2 * k;
         ctx!.beginPath();
         ctx!.moveTo(trail[i - 1].x, trail[i - 1].y);
         ctx!.lineTo(trail[i].x, trail[i].y);
@@ -132,9 +133,6 @@ export function initCursor() {
     else if (!reduced.matches) {
       if (Math.hypot(dx, dy) > 160) trail.length = 0;
       trail.push({ x: mx, y: my, t: performance.now() });
-      if (Math.hypot(dx, dy) > 5 && Math.random() < 0.45) {
-        sparks.push({ x: mx, y: my, vx: -dx * 0.04 + (Math.random() - 0.5) * 0.5, vy: -dy * 0.04 + (Math.random() - 0.5) * 0.5, born: performance.now(), life: 380 + Math.random() * 260, size: 0.7 + Math.random() * 1.1, color: COLORS[2 + Math.floor(Math.random() * 3)], streak: false });
-      }
     }
     schedule();
   }, { passive: true });
