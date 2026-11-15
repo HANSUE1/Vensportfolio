@@ -1,0 +1,14 @@
+---
+// A teacher's red-pen mark around a few words: a marker underline or a scribbled circle.
+// The stroke draws itself in (motion.ts); with reduced motion it simply appears.
+interface Props {
+  type?: 'underline' | 'circle';
+}
+const { type = 'underline' } = Astro.props;
+const shapes = {
+  underline: { viewBox: '0 0 200 24', d: 'M3 14C38 8 84 17 128 11S182 9 197 12M24 19C70 15 130 18 176 15' },
+  circle: { viewBox: '0 0 200 90', d: 'M30 52C14 30 56 9 108 8 160 7 197 24 191 48 185 72 128 84 80 80 34 76 6 62 14 40 22 22 58 12 92 11' },
+};
+const { viewBox, d } = shapes[type];
+---
+<span class:list={['mark', `mark--${type}`]}><slot /><svg class="mark__svg" viewBox={viewBox} preserveAspectRatio="none" aria-hidden="true" focusable="false"><path pathLength="1" d={d} /></svg></span>

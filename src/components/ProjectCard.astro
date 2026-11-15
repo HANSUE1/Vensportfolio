@@ -19,6 +19,11 @@ const { href, title, summary, tags, cover, photo, height = 460, wide = false } =
 <article class:list={['project-card', { 'project-card--wide': wide }]} style={`--card-h:${height}px`} data-reveal="fade-up">
   <a class="project-card__image" href={href} tabindex="-1" aria-hidden="true">
     <Cover cover={cover} photo={photo} size={wide ? 'lg' : 'md'} />
+    <!-- Teacher's grade stamp: a red-pen circle draws in and "A+" pops up on hover -->
+    <span class="grade">
+      <svg viewBox="0 0 100 100" focusable="false"><path pathLength="1" d="M58 9C30 6 9 26 10 52s22 41 46 39 37-20 35-43C89 25 70 9 46 12" /></svg>
+      <span class="grade__text">A+</span>
+    </span>
   </a>
   <div class="project-card__body">
     <h3 class="project-card__heading"><a class="project-card__title" href={href}>{title}</a></h3>

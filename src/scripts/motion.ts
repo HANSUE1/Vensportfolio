@@ -13,8 +13,11 @@ const root = document.documentElement;
       and the hero content rises in. The real logo takes over the moment the name lands.
    A click, key press, scroll or touch fast-forwards the whole sequence. */
 export function initLoaderAndHero() {
-  const heroIn = () =>
+  const heroIn = () => {
     gsap.fromTo('[data-hero]', { y: 40, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 1.1, stagger: 0.12, ease: 'expo.out', clearProps: 'transform' });
+    // Then the teacher's red-pen marks draw themselves in, one after the other.
+    gsap.to('.mark__svg path', { strokeDashoffset: 0, duration: 0.9, ease: 'power2.inOut', stagger: 0.45, delay: 0.9 });
+  };
 
   const ldr = document.querySelector<HTMLElement>('.ldr');
   const name = ldr?.querySelector<HTMLElement>('.ldr__name');

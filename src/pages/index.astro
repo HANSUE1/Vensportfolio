@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Ticker from '../components/Ticker.astro';
 import Dividers from '../components/Dividers.astro';
+import Mark from '../components/Mark.astro';
 import Star from '../components/Star.astro';
 import Cover from '../components/Cover.astro';
 import ProjectCard from '../components/ProjectCard.astro';
@@ -46,7 +47,7 @@ const gallery = [
   <section class="hero">
     <div class="hero__inner">
       <h1 class="hero__intro" data-hero>
-        {profile.first} {profile.last} is a <span class="hero__bold">Pre-service English teacher</span> based out of {profile.location}. Currently studying <span class="hero__bold">English Education</span> at <span class="hero__bold">PNU-Manila</span>
+        {profile.first} {profile.last} is a <span class="hero__bold">Pre-service English teacher</span> based out of {profile.location}. Currently studying <Mark type="underline"><span class="hero__bold">English Education</span></Mark> at <Mark type="circle"><span class="hero__bold">PNU-Manila</span></Mark>
       </h1>
       <div class="hero__circle" data-hero>
         <a class="magnetic" href={url('about/')} data-magnetic aria-label={`About ${profile.first} ${profile.last}`}>
