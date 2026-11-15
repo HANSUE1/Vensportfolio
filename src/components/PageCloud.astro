@@ -1,0 +1,22 @@
+---
+// Inline list of every page, shown at the foot of case studies and About. `current` is a path like "about/".
+import { works } from '../data/experience';
+import { url } from '../lib/url';
+
+interface Props {
+  current?: string;
+}
+const { current } = Astro.props;
+const links = [
+  { href: '', label: 'All works' },
+  ...works.map((w) => ({ href: `work/${w.slug}/`, label: w.role })),
+  { href: 'leadership/', label: 'Leadership' },
+  { href: 'learning/', label: 'Learning' },
+  { href: 'about/', label: 'About Me' },
+];
+---
+<nav class="page-cloud" aria-label="All pages">
+  {links.map((l) => (
+    <a href={url(l.href)} aria-current={l.href === current ? 'page' : undefined}>{l.label}</a>
+  ))}
+</nav>

@@ -3,15 +3,14 @@ import Base from '../layouts/Base.astro';
 import Ticker from '../components/Ticker.astro';
 import Dividers from '../components/Dividers.astro';
 import Star from '../components/Star.astro';
-import Cover from '../components/Cover.astro';
+import PageCloud from '../components/PageCloud.astro';
+import { Image } from 'astro:assets';
+import portrait from '../assets/portrait.jpg';
+import candid from '../assets/candid.jpg';
 import { profile, education, works, leadership } from '../data/experience';
 import { totalSessions } from '../data/seminars';
 import { toolkit } from '../data/skills';
-import { hasPublic } from '../lib/rich';
 import { url } from '../lib/url';
-
-const hasPortrait = hasPublic('portrait.jpg');
-const hasCandid = hasPublic('candid.jpg');
 ---
 <Base
   title="About · Venelle Matutina"
@@ -46,18 +45,10 @@ const hasCandid = hasPublic('candid.jpg');
   <section class="about" aria-label="About me">
     <div class="about__photos" data-reveal="fade-up">
       <div class="about__photo">
-        {hasPortrait ? (
-          <img src={url('portrait.jpg')} alt={`Portrait of ${profile.first} ${profile.last}`} />
-        ) : (
-          <Cover cover={{ word: profile.first, note: 'pnu-manila', bg: '#f7b9d5', ink: '#7a1d48', pattern: 'dots' }} />
-        )}
+        <Image src={portrait} alt={`Portrait of ${profile.first} ${profile.last}`} widths={[460, 800]} sizes="(min-width: 62rem) 460px, 90vw" format="webp" />
       </div>
       <div class="about__mini">
-        {hasCandid ? (
-          <img src={url('candid.jpg')} alt="" />
-        ) : (
-          <Cover cover={{ word: ':)', note: '', bg: '#ece6ff', ink: '#4b2bd1', pattern: 'none' }} size="sm" />
-        )}
+        <Image src={candid} alt="" widths={[180, 360]} sizes="180px" format="webp" />
       </div>
     </div>
 
@@ -74,8 +65,8 @@ const hasCandid = hasPublic('candid.jpg');
       <p>Don’t hesitate to reach out at <a href={`mailto:${profile.email}`}>{profile.email}</a>. I’d love to hear from you.</p>
       <div class="about__actions">
         <a class="pill" href={`mailto:${profile.email}`}>Email me</a>
-        <button class="pill copy-btn" type="button" data-copy={profile.email}>
-          <span class="copy-btn__idle">Copy email</span><span class="copy-btn__done" aria-live="polite">Copied ✓</span>
+        <button class="pill" type="button" data-copy={profile.email}>
+          <span data-copy-label aria-live="polite">Copy email</span>
         </button>
       </div>
     </div>
@@ -123,11 +114,5 @@ const hasCandid = hasPublic('candid.jpg');
     <Ticker variant="mono" scroll="b" repeat={8} text={`${works.length} case studies. ${leadership.length} leadership roles. ${totalSessions} sessions.`} />
   </section>
 
-  <nav class="page-cloud" aria-label="All pages">
-    <a href={url('')}>All works</a>
-    {works.map((w) => <a href={url(`work/${w.slug}/`)}>{w.role}</a>)}
-    <a href={url('leadership/')}>Leadership</a>
-    <a href={url('learning/')}>Learning</a>
-    <a href={url('about/')} aria-current="page">About Me</a>
-  </nav>
+  <PageCloud current="about/" />
 </Base>

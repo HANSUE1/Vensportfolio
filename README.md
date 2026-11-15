@@ -35,15 +35,22 @@ All text lives in `src/data/`:
 Search for `TODO(Venelle)` to find things that still need her input. Wrap a phrase in `**double asterisks**`
 inside a summary to make it bold.
 
-## Photos (optional)
+## Photos
 
-Every card shows generated art until a photo is added. Drop files into `public/` and rebuild:
+Portraits live in `src/assets/` and are resized and converted to WebP at build time:
 
 | File | Where it appears |
 |---|---|
-| `public/portrait-circle.jpg` | Home hero circle (square) |
-| `public/portrait.jpg` | About page (4:5) |
-| `public/candid.jpg` | Small dashed photo on the About page |
+| `src/assets/portrait-circle.jpg` | Home hero circle (square crop) |
+| `src/assets/portrait.jpg` | About page (4:5) and the link-preview image |
+| `src/assets/candid.jpg` | Small dashed photo on the About page |
+
+Replace a file with the same name to change the photo.
+
+Cards show generated art until a photo is added. Drop files into `public/` and rebuild:
+
+| File | Where it appears |
+|---|---|
 | `public/work/<slug>.jpg` | A case-study card and its cover, e.g. `work/literacy-tutor.jpg` |
 | `public/work/literacy-tutor-2.jpg`, `-3.jpg` | The two small tiles in the "Currently" panel |
 | `public/work/<leadership-id>.jpg` | Leadership cards, e.g. `work/class-secretary.jpg` |

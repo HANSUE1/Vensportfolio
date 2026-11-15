@@ -7,14 +7,17 @@ import Cover from '../components/Cover.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import { profile, works, leadership } from '../data/experience';
 import { totalSessions } from '../data/seminars';
-import { rich, hasPublic } from '../lib/rich';
+import { getImage } from 'astro:assets';
+import portraitSrc from '../assets/portrait-circle.jpg';
+import { rich } from '../lib/rich';
 import { url } from '../lib/url';
 
 const bySlug = Object.fromEntries(works.map((w) => [w.slug, w]));
 const current = bySlug['literacy-tutor'];
 const workHref = (slug: string) => url(`work/${slug}/`);
 const leadHref = (id: string) => url(`leadership/#${id}`);
-const hasPortrait = hasPublic('portrait-circle.jpg');
+// One optimized WebP set, shared by the black-and-white layer and the colour layer.
+const portrait = await getImage({ src: portraitSrc, format: 'webp', widths: [320, 420, 640, 840], sizes: '(min-width: 62rem) 420px, (min-width: 48rem) 320px, 240px' });
 
 const fieldStudy = bySlug['field-study-teacher'];
 const writing = bySlug['research-and-publication'];
@@ -46,13 +49,13 @@ const gallery = [
         {profile.first} {profile.last} is a <span class="hero__bold">Pre-service English teacher</span> based out of {profile.location}. Currently studying <span class="hero__bold">English Education</span> at <span class="hero__bold">PNU-Manila</span>
       </h1>
       <div class="hero__circle" data-hero>
-        <a class="magnetic" href={url('about/')} data-magnetic aria-label="About Venelle">
+        <a class="magnetic" href={url('about/')} data-magnetic aria-label={`About ${profile.first} ${profile.last}`}>
           <span class="magnetic__face">
-            {hasPortrait ? <img src={url('portrait-circle.jpg')} alt={`Portrait of ${profile.first} ${profile.last}`} width="840" height="840" fetchpriority="high" /> : <span class="magnetic__word">hello!</span>}
+            <img src={portrait.src} srcset={portrait.srcSet.attribute} sizes={portrait.attributes.sizes} width="840" height="840" alt="" fetchpriority="high" decoding="async" />
             <span class="magnetic__ring"></span>
           </span>
           <span class="magnetic__hover">
-            {hasPortrait ? <img src={url('portrait-circle.jpg')} alt="" width="840" height="840" /> : <span class="magnetic__word">kumusta!</span>}
+            <img src={portrait.src} srcset={portrait.srcSet.attribute} sizes={portrait.attributes.sizes} width="840" height="840" alt="" decoding="async" />
           </span>
         </a>
       </div>
@@ -72,7 +75,7 @@ const gallery = [
 
   <div class="works-label">
     <Star />
-    <a class="works-label__link" href="#works-grid">Selected works</a>
+    <h2 class="works-label__heading"><a class="works-label__link" href="#works-grid">Selected works</a></h2>
     <Star />
   </div>
 
@@ -82,7 +85,7 @@ const gallery = [
     <div class="teaser__container">
       <div class="teaser__text" data-reveal="fade-up">
         <p class="teaser__eyebrow">Currently</p>
-        <h2 class="teaser__title" id="teaser-title"><a href={workHref(current.slug)}>{current.role} at Phoenix Publishing House</a></h2>
+        <h3 class="teaser__title" id="teaser-title"><a href={workHref(current.slug)}>{current.role} at Phoenix Publishing House</a></h3>
         <p class="teaser__copy" set:html={rich(current.summary)} />
         <div class="teaser__tags">
           {current.tags.map((t) => <span class="tag tag--purple">{t}</span>)}

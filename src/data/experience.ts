@@ -7,7 +7,6 @@ export const profile = {
   first: 'Venelle',
   last: 'Matutina',
   email: 'venellematutina@gmail.com',
-  role: 'Pre-service English teacher',
   location: 'Metro Manila',
   program: 'Bachelor of Education, Major in English',
   school: 'Philippine Normal University–Manila',

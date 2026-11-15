@@ -10,13 +10,16 @@ const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
 const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
 
 initDotGrid();
+initPortraitReveal();
 initMenu();
 initCopy();
 initLearningFilter();
 initCaseToc();
 initCursor();
 
-if (!reduced.matches) {
+// Motion runs only when allowed AND the JS-gated CSS is still active. If this script arrived after
+// the 3 s failsafe in Base.astro removed `js`, content is already visible: don't hide it again.
+if (!reduced.matches && root.classList.contains('js')) {
   initLoaderAndHero();
   initHeaderHide();
   initReveal();
@@ -147,24 +150,48 @@ function initScrollMotion() {
 function initMagnetic() {
   const desktop = window.matchMedia('(min-width: 992px)');
   document.querySelectorAll<HTMLElement>('[data-magnetic]').forEach((el) => {
-    let x = 0, y = 0, tx = 0, ty = 0, raf = 0;
-    const tick = () => {
-      x += (tx - x) * 0.08;
-      y += (ty - y) * 0.08;
-      el.style.translate = `${x.toFixed(2)}px ${y.toFixed(2)}px`;
-      raf = Math.abs(tx - x) + Math.abs(ty - y) > 0.1 ? requestAnimationFrame(tick) : 0;
-    };
-    const go = () => { if (!raf) raf = requestAnimationFrame(tick); };
+    // quickTo reuses one tween per axis: smooth, frame-rate independent, no hand-rolled rAF loop.
+    const toX = gsap.quickTo(el, 'x', { duration: 1, ease: 'power3.out' });
+    const toY = gsap.quickTo(el, 'y', { duration: 1, ease: 'power3.out' });
     el.addEventListener('pointermove', (e) => {
       if (!desktop.matches || e.pointerType !== 'mouse') return;
       const r = el.getBoundingClientRect();
-      const h = (e.clientX - (r.left - x)) / r.width;
+      const x = Number(gsap.getProperty(el, 'x'));
+      const y = Number(gsap.getProperty(el, 'y'));
+      const h = (e.clientX - (r.left - x)) / r.width; // 0..1 across the resting circle
       const v = (e.clientY - (r.top - y)) / r.height;
-      tx = (-2 + 4 * h) * (window.innerWidth / 100);
-      ty = (-5 + 10 * v) * (window.innerHeight / 100) * 0.4;
-      go();
+      toX((-2 + 4 * h) * (window.innerWidth / 100) * 0.7);
+      toY((-5 + 10 * v) * (window.innerHeight / 100) * 0.3);
     }, { passive: true });
-    el.addEventListener('pointerleave', () => { tx = 0; ty = 0; go(); });
+    el.addEventListener('pointerleave', () => { toX(0); toY(0); });
+  });
+}
+
+/* ───────── Portrait colour reveal: opens from the entry point, closes toward the exit ───────── */
+function initPortraitReveal() {
+  document.querySelectorAll<HTMLElement>('[data-magnetic]').forEach((el) => {
+    const layer = el.querySelector<HTMLElement>('.magnetic__hover');
+    if (!layer) return;
+    const setOrigin = (e: PointerEvent) => {
+      const r = el.getBoundingClientRect();
+      layer.style.setProperty('--mx', `${(((e.clientX - r.left) / r.width) * 100).toFixed(1)}%`);
+      layer.style.setProperty('--my', `${(((e.clientY - r.top) / r.height) * 100).toFixed(1)}%`);
+    };
+    el.addEventListener('pointerenter', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      // Move the collapsed circle to the entry point instantly (no transition), then open it,
+      // so it grows from where the pointer came in instead of sliding over from the centre.
+      layer.style.transition = 'none';
+      setOrigin(e);
+      void getComputedStyle(layer).clipPath;
+      layer.style.transition = '';
+      el.classList.add('is-revealed');
+    });
+    el.addEventListener('pointerleave', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      setOrigin(e);
+      el.classList.remove('is-revealed');
+    });
   });
 }
 
@@ -302,13 +329,23 @@ function initCursor() {
     schedule();
   }, { passive: true });
 
-  document.addEventListener('pointerover', (e) => {
-    if (e.pointerType !== 'mouse' || bursting) return;
-    const t = e.target instanceof Element ? e.target.closest<HTMLElement>(TARGETS) : null;
+  const setTarget = (target: EventTarget | null) => {
+    const t = target instanceof Element ? target.closest<HTMLElement>(TARGETS) : null;
     if (t) label.textContent = t.dataset.cursorLabel ?? 'View';
     box.dataset.state = t ? 'ring' : 'idle';
     schedule();
+  };
+  document.addEventListener('pointerover', (e) => {
+    if (e.pointerType === 'mouse' && !bursting) setTarget(e.target);
   });
+  // Scrolling moves content under a still pointer without firing pointerover; re-check so the
+  // "View" ring doesn't stay stuck after a card scrolls away.
+  let scrollQueued = false;
+  window.addEventListener('scroll', () => {
+    if (scrollQueued || !inside || bursting) return;
+    scrollQueued = true;
+    requestAnimationFrame(() => { scrollQueued = false; setTarget(document.elementFromPoint(mx, my)); });
+  }, { passive: true });
   root.addEventListener('pointerleave', () => { inside = false; if (!bursting) box.dataset.state = 'idle'; schedule(); });
 
   // Burst, then navigate, for internal card links
@@ -379,13 +416,20 @@ function initLearningFilter() {
 /* ───────── Copy email ───────── */
 function initCopy() {
   document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((btn) => {
+    // One always-rendered live region whose text changes, so screen readers announce "Copied".
+    const label = btn.querySelector<HTMLElement>('[data-copy-label]');
+    const idle = label?.textContent ?? '';
     let timer = 0;
     btn.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(btn.dataset.copy ?? '');
+        if (label) label.textContent = 'Copied ✓';
         btn.classList.add('is-done');
         clearTimeout(timer);
-        timer = window.setTimeout(() => btn.classList.remove('is-done'), 2200);
+        timer = window.setTimeout(() => {
+          if (label) label.textContent = idle;
+          btn.classList.remove('is-done');
+        }, 2200);
       } catch {
         window.location.href = `mailto:${btn.dataset.copy}`;
       }

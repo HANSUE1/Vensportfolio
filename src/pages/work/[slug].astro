@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Cover from '../../components/Cover.astro';
+import PageCloud from '../../components/PageCloud.astro';
 import { works, type Work } from '../../data/experience';
 import { rich, plain } from '../../lib/rich';
 import { url } from '../../lib/url';
@@ -97,7 +98,7 @@ const minutes = Math.max(1, Math.round(words / 200));
         <section class="case__section" id="reflection" data-reveal="fade-up">
           <p class="case__num"><b>{num()}</b> Reflection</p>
           <h2 class="case__h2">What it taught me</h2>
-          <p class="case__quote">{work.reflection}</p>
+          <blockquote class="case__quote"><p>{work.reflection}</p></blockquote>
         </section>
       )}
 
@@ -107,13 +108,5 @@ const minutes = Math.max(1, Math.round(words / 200));
     </article>
   </div>
 
-  <nav class="page-cloud" aria-label="All pages">
-    <a href={url('')}>All works</a>
-    {works.map((w) => (
-      <a href={url(`work/${w.slug}/`)} aria-current={w.slug === work.slug ? 'page' : undefined}>{w.role}</a>
-    ))}
-    <a href={url('leadership/')}>Leadership</a>
-    <a href={url('learning/')}>Learning</a>
-    <a href={url('about/')}>About Me</a>
-  </nav>
+  <PageCloud current={`work/${work.slug}/`} />
 </Base>
