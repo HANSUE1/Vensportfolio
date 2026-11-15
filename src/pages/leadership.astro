@@ -20,7 +20,7 @@ import { leadership } from '../data/experience';
   <div class="lead-grid">
     {leadership.map((r) => (
       <article class="lead-card" id={r.id} data-reveal="fade-up">
-        <div class="project-card__image">
+        <div class="lead-card__image">
           <Cover cover={r.cover} photo={`work/${r.id}.jpg`} />
         </div>
         <p class="lead-card__date">{r.dates}</p>

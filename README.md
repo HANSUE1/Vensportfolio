@@ -21,6 +21,7 @@ If the dev server shows "Outdated Optimize Dep" errors after dependencies change
 | `/leadership/` | Student leadership roles |
 | `/learning/` | Reading Log of seminars, filterable by theme |
 | `/about/` | Bio, education, skills |
+| `/404` | Friendly "page not found" page (served automatically by the host) |
 
 ## Edit content
 
@@ -62,7 +63,7 @@ Blur or crop out children's faces unless you have consent.
 The dotted background on Works, Leadership, Learning and case-study pages is an interactive WebGL dot grid
 (`src/scripts/dotgrid.js`, ported from the React Bits `<DotGrid />` component to plain JavaScript). Dots light up
 orange near the cursor and ripple out from clicks. Tweak colors, size and spacing in `initDotGrid()` in
-`src/scripts/site.ts`. Browsers without WebGL2 fall back to the static CSS dots.
+`src/scripts/background.ts`. Browsers without WebGL2 fall back to the static CSS dots.
 
 ## Motion and accessibility
 
@@ -75,3 +76,23 @@ orange near the cursor and ripple out from clicks. Tweak colors, size and spacin
 `.github/workflows/deploy.yml` publishes to GitHub Pages on every push to `main`
 (enable it under Settings → Pages → Source: GitHub Actions). For Vercel or Netlify instead, import the repo
 there and delete that workflow file. No code changes are needed.
+
+## Project structure
+
+```
+src/
+  data/          all text content (edit here)
+  assets/        portraits, optimized to WebP at build time
+  layouts/       Base.astro: head, header, cursor, loader, footer
+  components/    Cover, ProjectCard, Ticker, Dividers, Star, PageCloud
+  pages/         home, about, leadership, learning, 404, work/[slug] case studies
+  lib/           url() base-path helper, rich() bold-text helper
+  scripts/
+    site.ts        entry point: decides what runs (respects reduced motion)
+    background.ts  interactive dot grid setup
+    dotgrid.js     WebGL dot-grid engine (React Bits port)
+    cursor.ts      custom cursor, trail, click burst
+    motion.ts      loader, scroll reveals, scroll tickers, magnetic portrait
+    ui.ts          menu, header, case-study contents, filters, copy button
+  styles/        global.css: tokens, layout, components, motion states
+```

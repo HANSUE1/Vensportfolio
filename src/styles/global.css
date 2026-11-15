@@ -46,7 +46,7 @@
 /* ─────────────── Base ─────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 html, body { overflow-x: clip; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: calc(var(--header-h) + 16px); }
 body {
   margin: 0;
   min-height: 100%;
@@ -184,7 +184,7 @@ html.ldr-out .ldr { animation: ldr-out 0.7s cubic-bezier(0.76, 0, 0.24, 1) forwa
   .js [data-reveal='fade']:not([data-revealed]) { opacity: 0; }
   .js [data-reveal='line-draw'] > * { transition: transform 1.4s var(--ease-out); }
   .js [data-reveal='line-draw']:not([data-revealed]) > * { transform: translateX(-102%); }
-  .js [data-scroll='ticker-b'] { transform: translateX(-45vw); }
+  .js [data-scroll='ticker-b'] { transform: translateX(-65vw); }
   .js [data-hero] { visibility: hidden; }
 }
 [data-reveal='line-draw'] { overflow: clip; }
@@ -375,9 +375,8 @@ img.cover { object-fit: cover; }
   position: relative; display: block; height: clamp(240px, 86vw, var(--card-h)); overflow: hidden;
   border-radius: var(--radius-work); background-color: var(--placeholder); transition: opacity 0.2s;
 }
-.project-card__image:hover { opacity: 0.8; }
-.project-card__image:hover .cover__word { transform: scale(1.06) rotate(2deg); }
-.project-card__body { display: flex; flex-direction: column; margin-top: 18px; }
+a.project-card__image:hover { opacity: 0.8; }
+a.project-card__image:hover .cover__word, .project-card__body { display: flex; flex-direction: column; margin-top: 18px; }
 .project-card__heading { margin: 0 0 8px; font: inherit; }
 .project-card__title {
   color: var(--ink); font-family: var(--font-general); font-size: 20px; font-weight: 500; line-height: 28px;
@@ -453,6 +452,9 @@ img.cover { object-fit: cover; }
 .page-head__sub { margin-top: 18px; max-width: 46rem; color: var(--grey-600); font-family: var(--font-general); font-size: 17px; font-weight: 300; line-height: 30px; }
 @media (min-width: 62rem) { .page-head { padding-top: calc(var(--header-h) + 50px); } .page-head__sub { font-size: 19px; line-height: 34px; } }
 
+.not-found { min-height: 55vh; }
+.not-found__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+
 .pill {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 10px 20px; border-radius: 999px; border: 2px solid #000;
@@ -493,7 +495,7 @@ img.cover { object-fit: cover; }
 .case__meta dt { font-size: 10px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--grey-450); }
 .case__meta dd { margin: 4px 0 0; font-size: 13px; line-height: 20px; }
 
-.case__section { max-width: 760px; margin: clamp(64px, 10vw, 120px) auto 0; scroll-margin-top: 120px; }
+.case__section { max-width: 760px; margin: clamp(64px, 10vw, 120px) auto 0; }
 .case__num { display: flex; gap: 14px; align-items: center; font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--grey-450); }
 .case__num b { color: var(--teal-ink); font-weight: 600; }
 .case__h2 { margin-top: 10px; font-family: var(--font-general); font-size: clamp(24px, 2.6vw, 30px); font-weight: 500; line-height: 1.25; }
@@ -515,8 +517,7 @@ img.cover { object-fit: cover; }
 /* ─────────────── Leadership page ─────────────── */
 .lead-grid { display: grid; gap: 56px 30px; max-width: calc(1136px + 2 * var(--gutter)); margin: 40px auto 0; padding-inline: var(--gutter); }
 @media (min-width: 48rem) { .lead-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .lead-grid > :first-child { grid-column: 1 / -1; } }
-.lead-card { scroll-margin-top: 120px; }
-.lead-card .project-card__image { height: clamp(220px, 60vw, 340px); }
+.lead-card__image { position: relative; height: clamp(220px, 60vw, 340px); overflow: hidden; border-radius: var(--radius-work); background-color: var(--placeholder); }
 .lead-card__date { font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--grey-450); margin-top: 18px; }
 .lead-card__title { margin-top: 4px; font-family: var(--font-general); font-size: var(--text-card-title); font-weight: 500; line-height: var(--text-card-title-lh); }
 .lead-card__org { color: var(--grey-600); font-size: 14px; line-height: 22px; margin-top: 4px; }

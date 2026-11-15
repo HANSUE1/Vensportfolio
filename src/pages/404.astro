@@ -1,0 +1,18 @@
+---
+// Served by GitHub Pages, Netlify and Vercel for any URL that doesn't exist.
+import Base from '../layouts/Base.astro';
+import PageCloud from '../components/PageCloud.astro';
+import { url } from '../lib/url';
+---
+<Base title="Page not found · Venelle Matutina" description="This page doesn't exist. Head back to Venelle Matutina's portfolio.">
+  <header class="page-head not-found" data-hero>
+    <p class="page-head__script">Oops, wrong page!</p>
+    <h1 class="display">404</h1>
+    <p class="page-head__sub">This page doesn’t exist, or it moved. Here’s the way back.</p>
+    <div class="not-found__actions">
+      <a class="pill pill--dark" href={url('')}>Back to works</a>
+      <a class="pill" href={url('about/')}>About Venelle</a>
+    </div>
+  </header>
+  <PageCloud />
+</Base>
