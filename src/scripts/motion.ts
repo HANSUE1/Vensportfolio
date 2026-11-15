@@ -6,18 +6,59 @@ gsap.registerPlugin(ScrollTrigger);
 
 const root = document.documentElement;
 
-/* ───────── Intro loader, then hero entrance ───────── */
+/* ───────── Landing intro, then hero entrance ─────────
+   1. The name fades in, large and centred.
+   2. It holds for a moment.
+   3. It shrinks and glides onto the header logo (top-left) while the white layer fades out
+      and the hero content rises in. The real logo takes over the moment the name lands.
+   A click, key press, scroll or touch fast-forwards the whole sequence. */
 export function initLoaderAndHero() {
   const heroIn = () =>
     gsap.fromTo('[data-hero]', { y: 40, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 1.1, stagger: 0.12, ease: 'expo.out', clearProps: 'transform' });
 
-  if (!root.classList.contains('ldr-on')) { heroIn(); return; }
+  const ldr = document.querySelector<HTMLElement>('.ldr');
+  const name = ldr?.querySelector<HTMLElement>('.ldr__name');
+  const bg = ldr?.querySelector<HTMLElement>('.ldr__bg');
+  const logo = document.querySelector<HTMLElement>('.site-header__logo');
+  if (!root.classList.contains('ldr-on') || !ldr || !name || !bg || !logo) {
+    root.classList.remove('ldr-on');
+    heroIn();
+    return;
+  }
+
+  let speed = 1;
+  let active: gsap.core.Timeline | null = null;
+  const skipEvents = ['pointerdown', 'keydown', 'wheel', 'touchstart'] as const;
+  const skip = () => { speed = 4; active?.timeScale(speed); };
+  skipEvents.forEach((type) => window.addEventListener(type, skip, { once: true, passive: true }));
+
   const finish = () => {
-    root.classList.add('ldr-out');
-    setTimeout(heroIn, 250);
-    setTimeout(() => root.classList.remove('ldr-on', 'ldr-out'), 750);
+    skipEvents.forEach((type) => window.removeEventListener(type, skip));
+    root.classList.remove('ldr-on');
+    gsap.set([name, bg, logo], { clearProps: 'all' });
   };
-  Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 1500))]).then(() => setTimeout(finish, 1300));
+
+  // Measured at flight time, so it lands exactly on the logo at any window size or zoom.
+  const fly = () => {
+    const from = name.getBoundingClientRect();
+    const to = logo.getBoundingClientRect();
+    ldr.style.pointerEvents = 'none'; // the page underneath is clickable as soon as it shows
+    active = gsap.timeline({ onComplete: finish })
+      .to(name, { x: to.left - from.left, y: to.top - from.top, scale: to.width / from.width, duration: 1.15, ease: 'expo.inOut' }, 0)
+      .to(bg, { autoAlpha: 0, duration: 0.9, ease: 'power2.inOut' }, 0.2)
+      .add(heroIn, 0.55)
+      .set(logo, { opacity: 1 }, 1.15) // real logo appears under the landed name...
+      .to(name, { autoAlpha: 0, duration: 0.2 }, 1.15) // ...and the flying copy fades away
+      .timeScale(speed);
+  };
+
+  // Wait for the script font so the name is measured in its final shape.
+  Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 1200))]).then(() => {
+    active = gsap.timeline({ onComplete: fly })
+      .fromTo(name, { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 1, ease: 'power2.out' })
+      .to({}, { duration: 0.7 }) // hold
+      .timeScale(speed);
+  });
 }
 
 /* ───────── Reveal on scroll (CSS transitions, toggled by attribute) ───────── */

@@ -36,6 +36,14 @@ export function initHeaderHide() {
     if (Math.abs(delta) > 2 || y <= 0) last = y;
   };
   window.addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
+
+  // Bring the hidden header back when the mouse heads for it or keyboard focus enters it,
+  // so the nav is always reachable without scrolling up first.
+  const show = () => header.classList.remove('is-hidden');
+  window.addEventListener('pointermove', (e) => {
+    if (e.pointerType === 'mouse' && e.clientY < header.offsetHeight + 24 && header.classList.contains('is-hidden')) show();
+  }, { passive: true });
+  header.addEventListener('focusin', show);
 }
 
 /* ───────── Case study: reading progress + active section ───────── */

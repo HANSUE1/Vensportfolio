@@ -169,21 +169,19 @@ button { font: inherit; }
   html[data-custom-cursor], html[data-custom-cursor] * { cursor: none !important; }
 }
 
-/* ─────────────── Intro loader ─────────────── */
+/* ─────────────── Landing intro (animated by motion.ts) ───────────────
+   The name fades in large and centred, then shrinks and flies onto the header logo
+   while the white layer fades away to reveal the page. */
 .ldr { display: none; }
-html.ldr-on .ldr {
-  position: fixed; inset: 0; z-index: 3000;
-  display: grid; place-items: center;
-  background: #fff;
-}
+html.ldr-on .ldr { position: fixed; inset: 0; z-index: 3000; display: grid; place-items: center; }
+.ldr__bg { position: absolute; inset: 0; background: #fff; }
 .ldr__name {
-  font-family: var(--font-script); font-size: clamp(2rem, 6vw, 5rem); line-height: 1.6; color: #000;
-  clip-path: inset(0 100% 0 0);
+  position: relative;
+  font-family: var(--font-script); font-size: clamp(2.25rem, 7vw, 6rem); line-height: 1.6; color: #000;
+  white-space: nowrap; transform-origin: 0 0; opacity: 0;
 }
-html.ldr-on .ldr__name { animation: ldr-write 1.1s 0.15s cubic-bezier(0.65, 0, 0.35, 1) forwards; }
-html.ldr-out .ldr { animation: ldr-out 0.7s cubic-bezier(0.76, 0, 0.24, 1) forwards; }
-@keyframes ldr-write { to { clip-path: inset(0 0 0 0); } }
-@keyframes ldr-out { to { transform: translateY(-100%); } }
+/* The real logo stays hidden until the flying name lands on it */
+html.ldr-on .site-header__logo { opacity: 0; }
 
 /* ─────────────── Reveal on scroll ─────────────── */
 @media (prefers-reduced-motion: no-preference) {

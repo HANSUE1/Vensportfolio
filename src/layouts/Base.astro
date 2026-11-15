@@ -51,24 +51,24 @@ const nav = [
     <!-- Loaded without blocking first paint; Montserrat shows until General Sans arrives. -->
     <link rel="stylesheet" href={fontshare} media="print" onload="this.media='all'" />
     <noscript><link rel="stylesheet" href={fontshare} /></noscript>
-    <script is:inline>
+    <script is:inline define:vars={{ homePath: url('') }}>
       (function () {
         var root = document.documentElement;
         root.classList.add('js');
         // If the site script never runs, drop the JS-only hidden states so content stays visible.
         setTimeout(function () { if (!window.__siteReady) root.classList.remove('js', 'ldr-on'); }, 3000);
-        // Intro loader: only on a fresh visit or reload, never for reduced motion or ?ldr=off.
+        // Landing intro (name fades in, then flies to the header logo): home page only, when arriving
+        // from another site or reloading. Not on in-site navigation, reduced motion, or ?ldr=off.
         try {
           var q = new URLSearchParams(location.search).get('ldr');
           if (q === 'off' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-          var nav = performance.getEntriesByType('navigation')[0];
-          var type = nav ? nav.type : 'navigate';
+          var path = location.pathname.replace(/index\.html$/, '');
+          var onHome = path === homePath || path + '/' === homePath;
+          var navEntry = performance.getEntriesByType('navigation')[0];
+          var reload = !!navEntry && navEntry.type === 'reload';
           var internal = false;
           try { internal = !!document.referrer && new URL(document.referrer).origin === location.origin; } catch (e) {}
-          if (q || type === 'reload' || (type === 'navigate' && !internal)) {
-            root.classList.add('ldr-on');
-            setTimeout(function () { root.classList.remove('ldr-on'); }, 4000);
-          }
+          if (q || (onHome && (reload || !internal))) root.classList.add('ldr-on');
         } catch (e) {}
       })();
     </script>
@@ -107,6 +107,7 @@ const nav = [
     </div>
 
     <div class="ldr" aria-hidden="true">
+      <div class="ldr__bg"></div>
       <span class="ldr__name">{profile.first} {profile.last}</span>
     </div>
 
