@@ -1,0 +1,76 @@
+---
+import '@fontsource-variable/fraunces/opsz.css';
+import '@fontsource-variable/fraunces/opsz-italic.css';
+import '@fontsource-variable/newsreader';
+import '@fontsource-variable/caveat';
+import 'lenis/dist/lenis.css';
+import '../styles/global.css';
+import { url } from '../lib/url';
+import { profile } from '../data/experience';
+
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const home = url('');
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="theme-color" content="#f6f1e7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#12162a" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href={url('favicon.svg')} type="image/svg+xml" />
+    <script is:inline>
+      // Enables motion-only CSS. If the motion script never loads, fall back to static content.
+      document.documentElement.classList.add('js');
+      setTimeout(function () {
+        if (!window.__motionReady) document.documentElement.classList.remove('js');
+      }, 2500);
+    </script>
+  </head>
+  <body>
+    <div class="progress" aria-hidden="true"></div>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <div class="wrap">
+        <a class="brand" href={home}>Venelle <em>Matutina</em></a>
+        <nav aria-label="Primary">
+          <ul class="nav">
+            <li><a href={`${home}#teaching`}>Teaching</a></li>
+            <li><a href={`${home}#leadership`}>Leadership</a></li>
+            <li><a href={`${home}#writing`}>Writing</a></li>
+            <li><a href={`${home}#reading-log`}>Reading Log</a></li>
+            <li class="nav-contact"><a href={`${home}#contact`}>Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <p>© {new Date().getFullYear()} {profile.name}</p>
+        <p>References available on request.</p>
+      </div>
+    </footer>
+
+    <script>
+      import '../scripts/motion';
+    </script>
+  </body>
+</html>

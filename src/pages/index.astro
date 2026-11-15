@@ -1,0 +1,269 @@
+---
+import fs from 'node:fs';
+import Layout from '../layouts/Layout.astro';
+import Pen from '../components/Pen.astro';
+import { profile, teaching, leadership, writing } from '../data/experience';
+import { seminars, themes, themeCounts, totalSessions, type Theme } from '../data/seminars';
+import { toolkit } from '../data/skills';
+import { url } from '../lib/url';
+
+// Drop a photo at public/portrait.jpg and it appears automatically; otherwise a monogram shows.
+const hasPortrait = fs.existsSync('public/portrait.jpg');
+const LOG_LIMIT = 8;
+---
+<Layout
+  title="Venelle Matutina · Pre-service English Teacher"
+  description="Portfolio of Venelle Ericka A. Matutina, English Education student at the Philippine Normal University–Manila: literacy tutoring, teaching, writing, and student leadership."
+>
+  <!-- ───── Hero ───── -->
+  <section class="wrap hero" aria-labelledby="hero-title">
+    <div class="hero-note" aria-hidden="true" data-hero>
+      <span class="hand">Dean’s Lister,<br />A.Y. 2024–25</span>
+      <svg class="arrow-note" viewBox="0 0 80 48">
+        <path pathLength="1" d="M4 6c10 22 30 34 62 32" />
+        <path pathLength="1" d="M58 30l9 8-11 5" />
+      </svg>
+    </div>
+
+    <div>
+      <p class="eyebrow" data-hero>Portfolio · Pre-service English Teacher</p>
+      <h1 id="hero-title" class="hero-title">Venelle Ericka <em>Matutina</em></h1>
+      <p class="lead" data-hero>
+        An <span class="annotate" data-hero-pen>English educator<Pen /></span> in the making: tutoring young
+        readers, writing for publication, and leading student organizations at the {profile.school}.
+      </p>
+      <div class="actions" data-hero>
+        <a class="btn" href="#teaching">See teaching work <span class="arrow" aria-hidden="true">→</span></a>
+        <a class="btn ghost" href="#contact">Get in touch</a>
+      </div>
+    </div>
+
+    <figure class="portrait hero-figure" data-hero>
+      {hasPortrait ? (
+        <img src={url('portrait.jpg')} alt="Portrait of Venelle Matutina" width="544" height="680" fetchpriority="high" />
+      ) : (
+        <div class="monogram" role="img" aria-label="Venelle Matutina monogram">VM</div>
+      )}
+      <figcaption>PNU-Manila · BSEd English ’27</figcaption>
+    </figure>
+  </section>
+
+  <!-- ───── Prologue ───── -->
+  <section class="wrap chapter" aria-labelledby="prologue-title">
+    <div class="margin">
+      <span class="numeral">Prologue</span>
+      <span class="margin-label" id="prologue-title">In brief</span>
+    </div>
+    <div>
+      <p class="prologue-text" data-reveal>
+        I’m a third-year English Education student, graduating in {profile.gradYear}. My work sits where <mark class="hl">reading, writing, and people</mark> meet.
+        I <mark class="hl">assess and build early literacy</mark> as a tutor, <mark class="hl">facilitate English practice for international students</mark>,
+        write for my university’s international volunteer body, and <mark class="hl">keep student organizations running</mark> from the inside.
+      </p>
+
+      <dl class="glance" data-reveal>
+        <div class="stat">
+          <dt class="stat-cap">Teaching engagements, kindergarten to university</dt>
+          <dd class="stat-num" data-count={teaching.length}>{teaching.length}</dd>
+        </div>
+        <div class="stat">
+          <dt class="stat-cap">Leadership posts since 2023</dt>
+          <dd class="stat-num" data-count={leadership.length}>{leadership.length}</dd>
+        </div>
+        <div class="stat">
+          <dt class="stat-cap">Seminar &amp; training sessions</dt>
+          <dd class="stat-num" data-count={totalSessions}>{totalSessions}</dd>
+        </div>
+        <div class="stat">
+          <dt class="stat-cap">Terms on the Dean’s List, A.Y. 2024–25</dt>
+          <dd class="stat-num" data-count="3">3</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ───── Chapter I: Teaching ───── -->
+  <section id="teaching" class="wrap chapter" aria-labelledby="teaching-title">
+    <div class="margin">
+      <span class="numeral">Chapter I</span>
+      <span class="margin-label">Teaching</span>
+      <span class="hand" aria-hidden="true">four rooms, four kinds of learners</span>
+    </div>
+    <div>
+      <header class="chapter-head">
+        <h2 id="teaching-title" class="display" data-reveal>In the classroom</h2>
+        <p class="lead" data-reveal>
+          From kindergarteners to visiting university students, each placement asked for a different way of
+          teaching English.
+        </p>
+      </header>
+      <div class="cards">
+        {teaching.map((r) => (
+          <article class="card" data-reveal>
+            <p class="card-meta"><span>{r.dates}</span><span>{r.learners}</span></p>
+            <h3>
+              <a href={url(`teaching/${r.slug}/`)}>
+                <span class="annotate wraps">{r.title}<Pen /></span>
+              </a>
+            </h3>
+            <p class="card-org">{r.org}</p>
+            <p>{r.summary}</p>
+            <p class="card-more" aria-hidden="true">Read case study <span class="arrow">→</span></p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ───── Chapter II: Leadership ───── -->
+  <section id="leadership" class="wrap chapter" aria-labelledby="leadership-title">
+    <div class="margin">
+      <span class="numeral">Chapter II</span>
+      <span class="margin-label">Leadership</span>
+      <span class="hand" aria-hidden="true">liaison, record-keeper, organizer</span>
+    </div>
+    <div>
+      <header class="chapter-head">
+        <h2 id="leadership-title" class="display" data-reveal>Keeping things running</h2>
+        <p class="lead" data-reveal>
+          Class offices and organization roles where the job was to listen, keep records straight, and connect
+          students with faculty.
+        </p>
+      </header>
+      <div class="ledger">
+        <span class="spine" aria-hidden="true"></span>
+        <ol>
+        {leadership.map((r) => (
+          <li data-reveal>
+            <span class="ledger-date">{r.dates}</span>
+            <h3>{r.title}</h3>
+            <p class="ledger-org">{r.org}</p>
+            <p class="ledger-note">{r.note}</p>
+          </li>
+        ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───── Chapter III: Writing ───── -->
+  <section id="writing" class="wrap chapter" aria-labelledby="writing-title">
+    <div class="margin">
+      <span class="numeral">Chapter III</span>
+      <span class="margin-label">Writing</span>
+      <span class="hand" aria-hidden="true">every event deserves a record</span>
+    </div>
+    <div>
+      <header class="chapter-head">
+        <h2 id="writing-title" class="display" data-reveal>On the <span class="annotate" data-pen>record<Pen /></span></h2>
+        <p class="byline" data-reveal>{writing.title} · {writing.org} · {writing.dates}</p>
+      </header>
+      <div class="clippings">
+        {writing.forms.map((f) => (
+          <article class="clipping" data-reveal>
+            <p class="clipping-kicker">{f.kicker}</p>
+            <h3>{f.title}</h3>
+            <p>{f.body}</p>
+          </article>
+        ))}
+        {writing.articles.map((a) => (
+          <article class="clipping" data-reveal>
+            <p class="clipping-kicker">{a.outlet}</p>
+            <h3><a href={a.href} target="_blank" rel="noopener">{a.title}</a></h3>
+            <p>Read the article ↗</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ───── Chapter IV: Reading Log ───── -->
+  <section id="reading-log" class="wrap chapter" aria-labelledby="log-title">
+    <div class="margin">
+      <span class="numeral">Chapter IV</span>
+      <span class="margin-label">Reading Log</span>
+      <span class="hand" aria-hidden="true">still a student of teaching</span>
+    </div>
+    <div>
+      <header class="chapter-head">
+        <h2 id="log-title" class="display" data-reveal>Always learning</h2>
+        <p class="lead" data-reveal>
+          <span data-count={totalSessions}>{totalSessions}</span> forum, workshop, and conference sessions since 2023,
+          from action research to AI in the English classroom.
+        </p>
+      </header>
+
+      <div class="chips" role="group" aria-label="Filter sessions by theme">
+        <button class="chip" type="button" data-filter="all" aria-pressed="true">All<span class="n">{seminars.length}</span></button>
+        {(Object.keys(themes) as Theme[]).map((t) => (
+          <button class="chip" type="button" data-filter={t} aria-pressed="false">
+            {themes[t]}<span class="n">{themeCounts[t]}</span>
+          </button>
+        ))}
+      </div>
+
+      <ol class="log" data-log data-limit={LOG_LIMIT}>
+        {seminars.map((s) => (
+          <li data-theme={s.theme}>
+            <span class="log-year">{s.year}</span>
+            <span class="log-title">
+              {s.title}
+              {s.sessions && <span class="log-x"> ×{s.sessions} sessions</span>}
+            </span>
+            <span class="log-org">{s.org}</span>
+          </li>
+        ))}
+      </ol>
+      <button class="btn ghost log-more" type="button" data-log-more aria-expanded="false">Show all</button>
+    </div>
+  </section>
+
+  <!-- ───── Toolkit ───── -->
+  <section id="toolkit" class="wrap chapter" aria-labelledby="toolkit-title">
+    <div class="margin">
+      <span class="numeral">Appendix</span>
+      <span class="margin-label">Toolkit</span>
+    </div>
+    <div>
+      <header class="chapter-head">
+        <h2 id="toolkit-title" class="display" data-reveal>What I bring</h2>
+      </header>
+      <div class="toolkit">
+        {toolkit.map((g) => (
+          <div data-reveal>
+            <h3>{g.group}</h3>
+            <dl>
+              {g.items.map((it) => (
+                <>
+                  <dt>{it.name}</dt>
+                  <dd>{it.body}</dd>
+                </>
+              ))}
+            </dl>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ───── Epilogue ───── -->
+  <section id="contact" class="wrap chapter epilogue" aria-labelledby="contact-title">
+    <div class="margin">
+      <span class="numeral">Epilogue</span>
+      <span class="margin-label">Contact</span>
+    </div>
+    <div>
+      <h2 id="contact-title" class="display" data-reveal>
+        Let’s talk about <span class="annotate" data-pen>teaching<Pen /></span>.
+      </h2>
+      <p class="lead" data-reveal>For tutoring, teaching, or writing opportunities, email is the best way to reach me.</p>
+      <div class="actions" data-reveal>
+        <a class="btn" href={`mailto:${profile.email}`}>Email me <span class="arrow" aria-hidden="true">→</span></a>
+        <button class="btn ghost" type="button" data-copy={profile.email}>
+          <span class="label" aria-live="polite">Copy email address</span>
+          <svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path pathLength="1" d="M4 12.5l5 5L20 6.5" /></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+</Layout>
