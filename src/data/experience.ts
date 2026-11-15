@@ -183,7 +183,7 @@ export const leadership: LeadershipRole[] = [
   {
     id: 'involb-undersecretary',
     title: 'Undersecretary',
-    org: 'Secretariat, International Volunteers’ and Leaders’ Body · Linkages and International Office, PNU',
+    org: 'International Volunteers’ and Leaders’ Body · Linkages and International Office, PNU',
     dates: 'Aug 2025 – May 2026',
     points: [
       'Maintained social media trackers, volunteer data, and member activity records.',
@@ -209,7 +209,7 @@ export const leadership: LeadershipRole[] = [
     org: 'Classroom Assembly · University Student Council, PNU',
     dates: 'Jan – Apr 2025',
     points: [
-      'Directed class officers and course representatives in planning major academic projects and capstones during Term 2.',
+      'Directed class officers and course representatives in planning major academic projects and capstones.',
       'Streamlined communication between students and faculty.',
     ],
     cover: { word: 'Pres.', note: '2nd year', bg: '#dff3ee', ink: '#0f6b5c', pattern: 'lines' },
