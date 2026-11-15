@@ -147,6 +147,15 @@ button { font: inherit; }
 .cursor__canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 .cursor__wrap { position: absolute; top: 0; left: 0; width: 0; height: 0; will-change: transform; }
 .cursor__wrap > * { position: absolute; top: 0; left: 0; translate: -50% -50%; }
+.cursor__wrap { transition: opacity 0.2s ease-out; }
+.cursor[data-hidden] .cursor__wrap { opacity: 0; }
+.cursor__dot {
+  width: 10px; height: 10px; border-radius: 50%; background: currentColor;
+  box-shadow: 0 0 8px rgb(255 176 64 / 0.8);
+  transition: opacity 0.15s ease-out, scale 0.2s ease-out;
+}
+.cursor[data-state='ring'] .cursor__dot { opacity: 0; scale: 0.4; }
+.cursor[data-state='burst'] .cursor__dot { opacity: 0; scale: 2.4; transition-duration: 0.16s; }
 .cursor__ring {
   width: 10px; height: 10px; border: 2px solid currentColor; border-radius: 50%; opacity: 0;
   transition: width 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.15s ease-out;
