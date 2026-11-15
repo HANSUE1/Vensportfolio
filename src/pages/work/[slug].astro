@@ -1,0 +1,119 @@
+---
+import Base from '../../layouts/Base.astro';
+import Cover from '../../components/Cover.astro';
+import { works, type Work } from '../../data/experience';
+import { rich, plain } from '../../lib/rich';
+import { url } from '../../lib/url';
+
+export function getStaticPaths() {
+  return works.map((work, i) => ({
+    params: { slug: work.slug },
+    props: { work, next: works[(i + 1) % works.length] },
+  }));
+}
+
+interface Props {
+  work: Work;
+  next: Work;
+}
+const { work, next } = Astro.props;
+
+const sections = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'what-i-did', label: 'What I did' },
+  ...(work.preparation ? [{ id: 'preparation', label: 'Preparation' }] : []),
+  { id: 'skills', label: 'Skills practiced' },
+  ...(work.reflection ? [{ id: 'reflection', label: 'Reflection' }] : []),
+];
+let n = 0;
+const num = () => String(++n).padStart(2, '0');
+const words = [work.overview, ...work.did.map((d) => d.body), work.preparation ?? '', work.reflection ?? ''].join(' ').split(/\s+/).length;
+const minutes = Math.max(1, Math.round(words / 200));
+---
+<Base title={`${work.role} · Venelle Matutina`} description={plain(work.summary)} current="works">
+  <div class="case">
+    <aside class="toc" aria-label="Contents">
+      <div class="toc__head"><span>Contents</span><span data-toc-pct>0%</span></div>
+      <div class="toc__bar"><span data-toc-bar></span></div>
+      <ol>
+        {sections.map((s) => <li><a href={`#${s.id}`} data-toc-link>{s.label}</a></li>)}
+      </ol>
+    </aside>
+
+    <article data-case>
+      <header class="case__head" data-hero>
+        <h1 class="display">{work.role}</h1>
+        <p class="case__subtitle">{work.org}{work.unit && <> · {work.unit}</>}</p>
+        <span class="case__pill">Quick read · about {minutes} min</span>
+      </header>
+
+      <div class="case__cover" data-reveal="fade-up">
+        <Cover cover={work.cover} photo={`work/${work.slug}.jpg`} size="lg" />
+      </div>
+
+      <section class="case__intro" id="overview">
+        <p class="case__kicker">{work.org.split(' (')[0]} · {work.dates}</p>
+        <h2 class="case__lead">{work.title}</h2>
+        <p class="case__overview" set:html={rich(work.summary)} />
+        <p class="case__overview">{work.overview}</p>
+        <dl class="case__meta">
+          <div><dt>When</dt><dd>{work.dates}</dd></div>
+          <div><dt>My role</dt><dd>{work.role}</dd></div>
+          <div><dt>Learners</dt><dd>{work.learners}</dd></div>
+          <div><dt>Setting</dt><dd>{work.setting}</dd></div>
+        </dl>
+      </section>
+
+      <section class="case__section" id="what-i-did" data-reveal="fade-up">
+        <p class="case__num"><b>{num()}</b> What I did</p>
+        <h2 class="case__h2">Responsibilities in practice</h2>
+        <div class="steps">
+          {work.did.map((d) => (
+            <div class="step">
+              <h3>{d.title}</h3>
+              <p>{d.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {work.preparation && (
+        <section class="case__section" id="preparation" data-reveal="fade-up">
+          <p class="case__num"><b>{num()}</b> Preparation</p>
+          <h2 class="case__h2">Training behind the work</h2>
+          <p class="case__text">{work.preparation}.</p>
+        </section>
+      )}
+
+      <section class="case__section" id="skills" data-reveal="fade-up">
+        <p class="case__num"><b>{num()}</b> Skills practiced</p>
+        <h2 class="case__h2">What this role built</h2>
+        <div class="case__tags">
+          {work.skills.map((s) => <span class="tag">{s}</span>)}
+        </div>
+      </section>
+
+      {work.reflection && (
+        <section class="case__section" id="reflection" data-reveal="fade-up">
+          <p class="case__num"><b>{num()}</b> Reflection</p>
+          <h2 class="case__h2">What it taught me</h2>
+          <p class="case__quote">{work.reflection}</p>
+        </section>
+      )}
+
+      <div class="case__section case__next">
+        <a class="pill pill--dark" href={url(`work/${next.slug}/`)}>Next: {next.role} →</a>
+      </div>
+    </article>
+  </div>
+
+  <nav class="page-cloud" aria-label="All pages">
+    <a href={url('')}>All works</a>
+    {works.map((w) => (
+      <a href={url(`work/${w.slug}/`)} aria-current={w.slug === work.slug ? 'page' : undefined}>{w.role}</a>
+    ))}
+    <a href={url('leadership/')}>Leadership</a>
+    <a href={url('learning/')}>Learning</a>
+    <a href={url('about/')}>About Me</a>
+  </nav>
+</Base>

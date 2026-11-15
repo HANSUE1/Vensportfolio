@@ -1,0 +1,16 @@
+---
+interface Props {
+  text: string;
+  variant?: 'script' | 'mono';
+  /** a: drifts left as you scroll · b: drifts right */
+  scroll?: 'a' | 'b';
+  faint?: boolean;
+  repeat?: number;
+}
+const { text, variant = 'script', scroll = 'a', faint = false, repeat = 3 } = Astro.props;
+---
+<div class="ticker" aria-label={text.trim()} role="img">
+  <div class:list={['ticker__row', `ticker__row--${variant}`, { 'ticker__row--faint': faint }]} data-scroll={`ticker-${scroll}`}>
+    {Array.from({ length: repeat }, () => <span class="ticker__text">{text}</span>)}
+  </div>
+</div>

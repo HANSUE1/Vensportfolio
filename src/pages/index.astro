@@ -1,269 +1,175 @@
 ---
-import fs from 'node:fs';
-import Layout from '../layouts/Layout.astro';
-import Pen from '../components/Pen.astro';
-import { profile, teaching, leadership, writing } from '../data/experience';
-import { seminars, themes, themeCounts, totalSessions, type Theme } from '../data/seminars';
-import { toolkit } from '../data/skills';
+import Base from '../layouts/Base.astro';
+import Ticker from '../components/Ticker.astro';
+import Dividers from '../components/Dividers.astro';
+import Star from '../components/Star.astro';
+import Cover from '../components/Cover.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { profile, works, leadership } from '../data/experience';
+import { totalSessions } from '../data/seminars';
+import { rich, hasPublic } from '../lib/rich';
 import { url } from '../lib/url';
 
-// Drop a photo at public/portrait.jpg and it appears automatically; otherwise a monogram shows.
-const hasPortrait = fs.existsSync('public/portrait.jpg');
-const LOG_LIMIT = 8;
+const bySlug = Object.fromEntries(works.map((w) => [w.slug, w]));
+const current = bySlug['literacy-tutor'];
+const workHref = (slug: string) => url(`work/${slug}/`);
+const leadHref = (id: string) => url(`leadership/#${id}`);
+const hasPortrait = hasPublic('portrait.jpg');
+
+const fieldStudy = bySlug['field-study-teacher'];
+const writing = bySlug['research-and-publication'];
+const pair = [bySlug['cultural-buddy'], bySlug['nstp-pre-service-teacher']];
+const leadCells = [
+  { r: leadership[0], s: '--from:1;--to:3;--inset-left:29px' },
+  { r: leadership[1], s: '--from:3;--to:4;--inset-right:30px' },
+  { r: leadership[2], s: '--from:1;--to:2;--inset-left:28px;--inset-right:30px' },
+  { r: leadership[4], s: '--from:2;--to:4;--inset-right:28px' },
+];
+
+const gallery = [
+  { caption: 'Reading Log', href: url('learning/'), cover: { word: 'Learning', note: `${totalSessions} sessions`, bg: '#ece6ff', ink: '#4b2bd1', pattern: 'lines' as const } },
+  { caption: 'Leadership', href: url('leadership/'), cover: { word: 'Leading', note: `${leadership.length} roles`, bg: '#fbe0ec', ink: '#b0346a', pattern: 'dots' as const } },
+  { caption: 'About Me', href: url('about/'), cover: { word: 'Hi there!', note: 'venelle', bg: '#ffe3d6', ink: '#d2400a', pattern: 'none' as const } },
+  { caption: 'Writing', href: workHref(writing.slug), cover: { word: 'Stories', note: 'involb', bg: '#e2eeff', ink: '#1a3362', pattern: 'grid' as const } },
+  { caption: 'Teaching', href: workHref(current.slug), cover: { word: 'Read.', note: 'key stage 1', bg: '#dff3ee', ink: '#0f6b5c', pattern: 'lines' as const } },
+];
 ---
-<Layout
-  title="Venelle Matutina · Pre-service English Teacher"
-  description="Portfolio of Venelle Ericka A. Matutina, English Education student at the Philippine Normal University–Manila: literacy tutoring, teaching, writing, and student leadership."
+<Base
+  title="Portfolio · Venelle Matutina"
+  description="Venelle Ericka A. Matutina is a pre-service English teacher at the Philippine Normal University–Manila: literacy tutoring, classroom teaching, writing, and student leadership."
+  current="works"
 >
   <!-- ───── Hero ───── -->
-  <section class="wrap hero" aria-labelledby="hero-title">
-    <div class="hero-note" aria-hidden="true" data-hero>
-      <span class="hand">Dean’s Lister,<br />A.Y. 2024–25</span>
-      <svg class="arrow-note" viewBox="0 0 80 48">
-        <path pathLength="1" d="M4 6c10 22 30 34 62 32" />
-        <path pathLength="1" d="M58 30l9 8-11 5" />
+  <section class="hero">
+    <div class="hero__inner">
+      <h1 class="hero__intro" data-hero>
+        {profile.first} {profile.last} is a <span class="hero__bold">Pre-service English teacher</span> based out of {profile.location}. Currently studying <span class="hero__bold">English Education</span> at <span class="hero__bold">PNU-Manila</span>
+      </h1>
+      <div class="hero__circle" data-hero>
+        <a class="magnetic" href={url('about/')} data-magnetic data-cursor-label="Say hi" aria-label="About Venelle">
+          <span class="magnetic__face">
+            {hasPortrait ? <img src={url('portrait.jpg')} alt="" /> : <span class="magnetic__word">hello!</span>}
+            <span class="magnetic__ring"></span>
+          </span>
+          <span class="magnetic__hover">
+            {hasPortrait ? <img src={url('portrait.jpg')} alt="" /> : <span class="magnetic__word">kumusta!</span>}
+          </span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <div class="hero-tickers" data-hero>
+    <Ticker text="English educator. Literacy tutor. a storyteller." scroll="a" repeat={2} />
+    <Ticker text="class president. writer. volunteer." scroll="b" repeat={2} />
+  </div>
+
+  <Dividers />
+
+  <div class="skills-ticker">
+    <Ticker variant="mono" faint scroll="b" repeat={8} text="Reading intervention. Lesson design. Journalistic writing. Public speaking." />
+  </div>
+
+  <div class="works-label">
+    <Star />
+    <a class="works-label__link" href="#works-grid">Selected works</a>
+    <Star />
+  </div>
+
+  <!-- ───── Currently (teaser) ───── -->
+  <section class="teaser" aria-labelledby="teaser-title">
+    <div class="teaser__panel" data-reveal="scale" aria-hidden="true"></div>
+    <div class="teaser__container">
+      <div class="teaser__text" data-reveal="fade-up">
+        <p class="teaser__eyebrow">Currently</p>
+        <h2 class="teaser__title" id="teaser-title"><a href={workHref(current.slug)}>{current.role} at Phoenix Publishing House</a></h2>
+        <p class="teaser__copy" set:html={rich(current.summary)} />
+        <div class="teaser__tags">
+          {current.tags.map((t) => <span class="tag tag--purple">{t}</span>)}
+        </div>
+      </div>
+      <div class="teaser__images" data-reveal="fade-up">
+        <div class="teaser__tall">
+          <a class="teaser__tile" href={workHref(current.slug)} data-cursor-label="View" aria-label={`${current.role} case study`}>
+            <Cover cover={current.cover} photo={`work/${current.slug}.jpg`} />
+          </a>
+        </div>
+        <div class="teaser__stack">
+          <a class="teaser__tile" href={workHref(current.slug)} data-cursor-label="View" tabindex="-1" aria-hidden="true">
+            <Cover cover={{ word: 'a, b, c', note: 'phonics', bg: '#fff1c7', ink: '#8a5a00', pattern: 'dots' }} photo={`work/${current.slug}-2.jpg`} size="sm" />
+          </a>
+          <a class="teaser__tile" href={workHref(current.slug)} data-cursor-label="View" tabindex="-1" aria-hidden="true">
+            <Cover cover={{ word: 'write!', note: 'literacy stations', bg: '#fbe0ec', ink: '#b0346a', pattern: 'grid' }} photo={`work/${current.slug}-3.jpg`} size="sm" />
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───── Works grid ───── -->
+  <div class="works" id="works-grid">
+    <div class="works__row" style="--tracks:1.5fr 1fr 1.5fr" data-row="1">
+      <div class="works__cell works__cell--wide" style="--from:1;--to:4;--inset-right:30px">
+        <ProjectCard href={workHref(fieldStudy.slug)} title={fieldStudy.title} summary={fieldStudy.summary} tags={fieldStudy.tags} cover={fieldStudy.cover} photo={`work/${fieldStudy.slug}.jpg`} height={350} wide />
+      </div>
+    </div>
+
+    <div class="works__row" style="--tracks:1.5fr 1fr 1.5fr 1fr" data-row="2">
+      {pair.map((w, i) => (
+        <div class="works__cell project-card--narrow" style={i === 0 ? '--from:1;--to:3' : '--from:3;--to:5'}>
+          <ProjectCard href={workHref(w.slug)} title={w.title} summary={w.summary} tags={w.tags} cover={w.cover} photo={`work/${w.slug}.jpg`} height={460} />
+        </div>
+      ))}
+    </div>
+
+    <div class="works__row" style="--tracks:1.5fr 1fr 1.5fr" data-row="3">
+      <div class="works__cell works__cell--wide" style="--from:1;--to:4;--inset-right:30px">
+        <ProjectCard href={workHref(writing.slug)} title={writing.title} summary={writing.summary} tags={writing.tags} cover={writing.cover} photo={`work/${writing.slug}.jpg`} height={350} wide />
+      </div>
+    </div>
+
+    <div class="works__row" style="--tracks:1.5fr 1fr 1.5fr" data-row="4">
+      {leadCells.map(({ r, s }) => (
+        <div class="works__cell" style={s}>
+          <ProjectCard href={leadHref(r.id)} title={r.title} tags={[r.dates, r.org.split(' · ')[0]]} cover={r.cover} photo={`work/${r.id}.jpg`} height={460} />
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <div class="closing-ticker">
+    <Ticker text="a teacher. a writer. a lifelong learner." scroll="a" repeat={2} />
+  </div>
+
+  <div class="pull-up">
+    <Dividers />
+  </div>
+
+  <!-- ───── What I've been up to ───── -->
+  <section class="explore" aria-labelledby="explore-title">
+    <div class="explore__intro">
+      <svg class="explore__icon" viewBox="0 0 64 74" aria-hidden="true">
+        <path d="M6 64V18c9-4 18-4 26 2 8-6 17-6 26-2v46c-9-4-18-4-26 2-8-6-17-6-26-2Z" />
+        <path d="M32 20v46" />
+        <path d="M12 28c5-1.5 10-1.5 15 1M12 36c5-1.5 10-1.5 15 1M37 29c5-2.5 10-2.5 15-1M37 37c5-2.5 10-2.5 15-1" />
+        <path d="M46 4l4 9M50 2v7M54 5l-2 7" />
       </svg>
-    </div>
-
-    <div>
-      <p class="eyebrow" data-hero>Portfolio · Pre-service English Teacher</p>
-      <h1 id="hero-title" class="hero-title">Venelle Ericka <em>Matutina</em></h1>
-      <p class="lead" data-hero>
-        An <span class="annotate" data-hero-pen>English educator<Pen /></span> in the making: tutoring young
-        readers, writing for publication, and leading student organizations at the {profile.school}.
-      </p>
-      <div class="actions" data-hero>
-        <a class="btn" href="#teaching">See teaching work <span class="arrow" aria-hidden="true">→</span></a>
-        <a class="btn ghost" href="#contact">Get in touch</a>
+      <div>
+        <h2 class="explore__title" id="explore-title">What I’ve been up to</h2>
+        <p class="explore__label">Want to see more? The links below lead to my leadership work, the seminars that shaped my teaching, and a little more about me.</p>
       </div>
     </div>
-
-    <figure class="portrait hero-figure" data-hero>
-      {hasPortrait ? (
-        <img src={url('portrait.jpg')} alt="Portrait of Venelle Matutina" width="544" height="680" fetchpriority="high" />
-      ) : (
-        <div class="monogram" role="img" aria-label="Venelle Matutina monogram">VM</div>
-      )}
-      <figcaption>PNU-Manila · BSEd English ’27</figcaption>
-    </figure>
-  </section>
-
-  <!-- ───── Prologue ───── -->
-  <section class="wrap chapter" aria-labelledby="prologue-title">
-    <div class="margin">
-      <span class="numeral">Prologue</span>
-      <span class="margin-label" id="prologue-title">In brief</span>
-    </div>
-    <div>
-      <p class="prologue-text" data-reveal>
-        I’m a third-year English Education student, graduating in {profile.gradYear}. My work sits where <mark class="hl">reading, writing, and people</mark> meet.
-        I <mark class="hl">assess and build early literacy</mark> as a tutor, <mark class="hl">facilitate English practice for international students</mark>,
-        write for my university’s international volunteer body, and <mark class="hl">keep student organizations running</mark> from the inside.
-      </p>
-
-      <dl class="glance" data-reveal>
-        <div class="stat">
-          <dt class="stat-cap">Teaching engagements, kindergarten to university</dt>
-          <dd class="stat-num" data-count={teaching.length}>{teaching.length}</dd>
-        </div>
-        <div class="stat">
-          <dt class="stat-cap">Leadership posts since 2023</dt>
-          <dd class="stat-num" data-count={leadership.length}>{leadership.length}</dd>
-        </div>
-        <div class="stat">
-          <dt class="stat-cap">Seminar &amp; training sessions</dt>
-          <dd class="stat-num" data-count={totalSessions}>{totalSessions}</dd>
-        </div>
-        <div class="stat">
-          <dt class="stat-cap">Terms on the Dean’s List, A.Y. 2024–25</dt>
-          <dd class="stat-num" data-count="3">3</dd>
-        </div>
-      </dl>
-    </div>
-  </section>
-
-  <!-- ───── Chapter I: Teaching ───── -->
-  <section id="teaching" class="wrap chapter" aria-labelledby="teaching-title">
-    <div class="margin">
-      <span class="numeral">Chapter I</span>
-      <span class="margin-label">Teaching</span>
-      <span class="hand" aria-hidden="true">four rooms, four kinds of learners</span>
-    </div>
-    <div>
-      <header class="chapter-head">
-        <h2 id="teaching-title" class="display" data-reveal>In the classroom</h2>
-        <p class="lead" data-reveal>
-          From kindergarteners to visiting university students, each placement asked for a different way of
-          teaching English.
-        </p>
-      </header>
-      <div class="cards">
-        {teaching.map((r) => (
-          <article class="card" data-reveal>
-            <p class="card-meta"><span>{r.dates}</span><span>{r.learners}</span></p>
-            <h3>
-              <a href={url(`teaching/${r.slug}/`)}>
-                <span class="annotate wraps">{r.title}<Pen /></span>
-              </a>
-            </h3>
-            <p class="card-org">{r.org}</p>
-            <p>{r.summary}</p>
-            <p class="card-more" aria-hidden="true">Read case study <span class="arrow">→</span></p>
-          </article>
+    <div class="gallery">
+      <div class="gallery__track" data-scroll="drift">
+        {gallery.map((g) => (
+          <figure class="gallery__item">
+            <a class="gallery__caption" href={g.href}>{g.caption}</a>
+            <a class="gallery__tile" href={g.href} data-cursor-label="Open" aria-label={g.caption} tabindex="-1">
+              <Cover cover={g.cover} />
+            </a>
+          </figure>
         ))}
       </div>
     </div>
   </section>
-
-  <!-- ───── Chapter II: Leadership ───── -->
-  <section id="leadership" class="wrap chapter" aria-labelledby="leadership-title">
-    <div class="margin">
-      <span class="numeral">Chapter II</span>
-      <span class="margin-label">Leadership</span>
-      <span class="hand" aria-hidden="true">liaison, record-keeper, organizer</span>
-    </div>
-    <div>
-      <header class="chapter-head">
-        <h2 id="leadership-title" class="display" data-reveal>Keeping things running</h2>
-        <p class="lead" data-reveal>
-          Class offices and organization roles where the job was to listen, keep records straight, and connect
-          students with faculty.
-        </p>
-      </header>
-      <div class="ledger">
-        <span class="spine" aria-hidden="true"></span>
-        <ol>
-        {leadership.map((r) => (
-          <li data-reveal>
-            <span class="ledger-date">{r.dates}</span>
-            <h3>{r.title}</h3>
-            <p class="ledger-org">{r.org}</p>
-            <p class="ledger-note">{r.note}</p>
-          </li>
-        ))}
-        </ol>
-      </div>
-    </div>
-  </section>
-
-  <!-- ───── Chapter III: Writing ───── -->
-  <section id="writing" class="wrap chapter" aria-labelledby="writing-title">
-    <div class="margin">
-      <span class="numeral">Chapter III</span>
-      <span class="margin-label">Writing</span>
-      <span class="hand" aria-hidden="true">every event deserves a record</span>
-    </div>
-    <div>
-      <header class="chapter-head">
-        <h2 id="writing-title" class="display" data-reveal>On the <span class="annotate" data-pen>record<Pen /></span></h2>
-        <p class="byline" data-reveal>{writing.title} · {writing.org} · {writing.dates}</p>
-      </header>
-      <div class="clippings">
-        {writing.forms.map((f) => (
-          <article class="clipping" data-reveal>
-            <p class="clipping-kicker">{f.kicker}</p>
-            <h3>{f.title}</h3>
-            <p>{f.body}</p>
-          </article>
-        ))}
-        {writing.articles.map((a) => (
-          <article class="clipping" data-reveal>
-            <p class="clipping-kicker">{a.outlet}</p>
-            <h3><a href={a.href} target="_blank" rel="noopener">{a.title}</a></h3>
-            <p>Read the article ↗</p>
-          </article>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- ───── Chapter IV: Reading Log ───── -->
-  <section id="reading-log" class="wrap chapter" aria-labelledby="log-title">
-    <div class="margin">
-      <span class="numeral">Chapter IV</span>
-      <span class="margin-label">Reading Log</span>
-      <span class="hand" aria-hidden="true">still a student of teaching</span>
-    </div>
-    <div>
-      <header class="chapter-head">
-        <h2 id="log-title" class="display" data-reveal>Always learning</h2>
-        <p class="lead" data-reveal>
-          <span data-count={totalSessions}>{totalSessions}</span> forum, workshop, and conference sessions since 2023,
-          from action research to AI in the English classroom.
-        </p>
-      </header>
-
-      <div class="chips" role="group" aria-label="Filter sessions by theme">
-        <button class="chip" type="button" data-filter="all" aria-pressed="true">All<span class="n">{seminars.length}</span></button>
-        {(Object.keys(themes) as Theme[]).map((t) => (
-          <button class="chip" type="button" data-filter={t} aria-pressed="false">
-            {themes[t]}<span class="n">{themeCounts[t]}</span>
-          </button>
-        ))}
-      </div>
-
-      <ol class="log" data-log data-limit={LOG_LIMIT}>
-        {seminars.map((s) => (
-          <li data-theme={s.theme}>
-            <span class="log-year">{s.year}</span>
-            <span class="log-title">
-              {s.title}
-              {s.sessions && <span class="log-x"> ×{s.sessions} sessions</span>}
-            </span>
-            <span class="log-org">{s.org}</span>
-          </li>
-        ))}
-      </ol>
-      <button class="btn ghost log-more" type="button" data-log-more aria-expanded="false">Show all</button>
-    </div>
-  </section>
-
-  <!-- ───── Toolkit ───── -->
-  <section id="toolkit" class="wrap chapter" aria-labelledby="toolkit-title">
-    <div class="margin">
-      <span class="numeral">Appendix</span>
-      <span class="margin-label">Toolkit</span>
-    </div>
-    <div>
-      <header class="chapter-head">
-        <h2 id="toolkit-title" class="display" data-reveal>What I bring</h2>
-      </header>
-      <div class="toolkit">
-        {toolkit.map((g) => (
-          <div data-reveal>
-            <h3>{g.group}</h3>
-            <dl>
-              {g.items.map((it) => (
-                <>
-                  <dt>{it.name}</dt>
-                  <dd>{it.body}</dd>
-                </>
-              ))}
-            </dl>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- ───── Epilogue ───── -->
-  <section id="contact" class="wrap chapter epilogue" aria-labelledby="contact-title">
-    <div class="margin">
-      <span class="numeral">Epilogue</span>
-      <span class="margin-label">Contact</span>
-    </div>
-    <div>
-      <h2 id="contact-title" class="display" data-reveal>
-        Let’s talk about <span class="annotate" data-pen>teaching<Pen /></span>.
-      </h2>
-      <p class="lead" data-reveal>For tutoring, teaching, or writing opportunities, email is the best way to reach me.</p>
-      <div class="actions" data-reveal>
-        <a class="btn" href={`mailto:${profile.email}`}>Email me <span class="arrow" aria-hidden="true">→</span></a>
-        <button class="btn ghost" type="button" data-copy={profile.email}>
-          <span class="label" aria-live="polite">Copy email address</span>
-          <svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path pathLength="1" d="M4 12.5l5 5L20 6.5" /></svg>
-        </button>
-      </div>
-    </div>
-  </section>
-</Layout>
+</Base>

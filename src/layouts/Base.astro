@@ -1,0 +1,119 @@
+---
+import '@fontsource/homemade-apple';
+import '@fontsource/anton';
+import '@fontsource-variable/montserrat';
+import '@fontsource-variable/inconsolata';
+import '../styles/global.css';
+import Dividers from '../components/Dividers.astro';
+import { url } from '../lib/url';
+import { profile } from '../data/experience';
+
+interface Props {
+  title: string;
+  description: string;
+  background?: 'dots' | 'paper' | 'plain';
+  /** Nav item to mark as current */
+  current?: 'works' | 'leadership' | 'learning' | 'about';
+  dividers?: boolean;
+}
+const { title, description, background = 'dots', current, dividers = true } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const nav = [
+  { key: 'works', label: 'Works', href: url('') },
+  { key: 'leadership', label: 'Leadership', href: url('leadership/') },
+  { key: 'learning', label: 'Learning', href: url('learning/') },
+  { key: 'about', label: 'About', href: url('about/') },
+] as const;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" href={url('favicon.svg')} type="image/svg+xml" />
+    <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
+    <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@300,400,500,600,700&display=swap" />
+    <script is:inline>
+      (function () {
+        var root = document.documentElement;
+        root.classList.add('js');
+        // If the site script never runs, drop the JS-only hidden states so content stays visible.
+        setTimeout(function () { if (!window.__siteReady) root.classList.remove('js', 'ldr-on'); }, 3000);
+        // Intro loader: only on a fresh visit or reload, never for reduced motion or ?ldr=off.
+        try {
+          var q = new URLSearchParams(location.search).get('ldr');
+          if (q === 'off' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+          var nav = performance.getEntriesByType('navigation')[0];
+          var type = nav ? nav.type : 'navigate';
+          var internal = false;
+          try { internal = !!document.referrer && new URL(document.referrer).origin === location.origin; } catch (e) {}
+          if (q || type === 'reload' || (type === 'navigate' && !internal)) {
+            root.classList.add('ldr-on');
+            setTimeout(function () { root.classList.remove('ldr-on'); }, 4000);
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body data-background={background}>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="site-header" data-header>
+      <div class="site-header__bar">
+        <a href={url('')} class="site-header__logo" aria-label={`${profile.first} ${profile.last}, home`}>
+          {profile.first} {profile.last}
+        </a>
+        <nav id="site-menu" class="site-header__nav" aria-label="Main">
+          <div class="site-header__links">
+            {nav.map((n) => (
+              <a href={n.href} class="site-header__link" aria-current={current === n.key ? 'page' : undefined}>{n.label}</a>
+            ))}
+          </div>
+        </nav>
+        <button type="button" class="site-header__burger" aria-expanded="false" aria-controls="site-menu" aria-label="Menu" data-menu-button>
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </header>
+
+    <div class="cursor" data-cursor aria-hidden="true">
+      <canvas class="cursor__canvas" data-cursor-canvas></canvas>
+      <div class="cursor__wrap" data-cursor-wrap>
+        <div class="cursor__ring"></div>
+        <span class="cursor__label" data-cursor-label-el></span>
+      </div>
+    </div>
+
+    <div class="ldr" aria-hidden="true">
+      <span class="ldr__name">{profile.first} {profile.last}</span>
+    </div>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    {dividers && <Dividers />}
+
+    <footer class="site-footer">
+      <nav class="site-footer__links" aria-label="Footer">
+        <a class="site-footer__link" href={`mailto:${profile.email}`}>Email</a>
+        <a class="site-footer__link" href={url('')}>Works</a>
+        <a class="site-footer__link" href={url('learning/')}>Learning</a>
+        <a class="site-footer__link" href={url('about/')}>About</a>
+      </nav>
+      <p class="site-footer__note">© {new Date().getFullYear()} {profile.name} · References available on request</p>
+    </footer>
+
+    <script>
+      import '../scripts/site';
+    </script>
+  </body>
+</html>

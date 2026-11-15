@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+import Cover from '../components/Cover.astro';
+import Ticker from '../components/Ticker.astro';
+import { leadership } from '../data/experience';
+---
+<Base
+  title="Leadership · Venelle Matutina"
+  description="Student leadership roles held by Venelle Matutina at the Philippine Normal University: class president, class secretary, InVoLB undersecretary, and Erudite Circle vice president."
+  current="leadership"
+>
+  <header class="page-head" data-hero>
+    <p class="page-head__script">Keeping things running</p>
+    <h1 class="display">Leadership</h1>
+    <p class="page-head__sub">Class offices and organization roles where the job was to listen, keep records straight, and connect students with faculty.</p>
+  </header>
+
+  <Ticker text="liaison. organizer. record-keeper." scroll="a" repeat={2} />
+
+  <div class="lead-grid">
+    {leadership.map((r) => (
+      <article class="lead-card" id={r.id} data-reveal="fade-up">
+        <div class="project-card__image">
+          <Cover cover={r.cover} photo={`work/${r.id}.jpg`} />
+        </div>
+        <p class="lead-card__date">{r.dates}</p>
+        <h2 class="lead-card__title">{r.title}</h2>
+        <p class="lead-card__org">{r.org}</p>
+        <ul>{r.points.map((p) => <li>{p}</li>)}</ul>
+      </article>
+    ))}
+  </div>
+</Base>

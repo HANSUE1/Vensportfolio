@@ -1,0 +1,30 @@
+---
+import Cover from './Cover.astro';
+import type { Cover as CoverT } from '../data/experience';
+import { rich } from '../lib/rich';
+
+interface Props {
+  href: string;
+  title: string;
+  summary?: string;
+  tags: string[];
+  cover: CoverT;
+  photo?: string;
+  height?: number;
+  wide?: boolean;
+  label?: string;
+}
+const { href, title, summary, tags, cover, photo, height = 460, wide = false, label = 'View' } = Astro.props;
+---
+<article class:list={['project-card', { 'project-card--wide': wide }]} style={`--card-h:${height}px`} data-reveal="fade-up">
+  <a class="project-card__image" href={href} tabindex="-1" aria-hidden="true" data-cursor-label={label}>
+    <Cover cover={cover} photo={photo} size={wide ? 'lg' : 'md'} />
+  </a>
+  <div class="project-card__body">
+    <a class="project-card__title" href={href}>{title}</a>
+    {summary && <a class="project-card__summary" href={href} set:html={rich(summary)} tabindex="-1" />}
+    <div class="project-card__tags">
+      {tags.map((t) => <span class="tag">{t}</span>)}
+    </div>
+  </div>
+</article>

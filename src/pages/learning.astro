@@ -1,0 +1,51 @@
+---
+import Base from '../layouts/Base.astro';
+import Ticker from '../components/Ticker.astro';
+import { seminars, themes, themeCounts, totalSessions, type Theme } from '../data/seminars';
+
+const years = [...new Set(seminars.map((s) => s.year))].sort((a, b) => b - a);
+---
+<Base
+  title="Learning · Venelle Matutina"
+  description={`Reading log: ${totalSessions} forum, workshop, conference, and seminar sessions Venelle Matutina has attended since 2023.`}
+  current="learning"
+>
+  <header class="page-head" data-hero>
+    <p class="page-head__script">Still a student of teaching</p>
+    <h1 class="display">Reading Log</h1>
+    <p class="page-head__sub">{totalSessions} forum, workshop, conference, and seminar sessions since 2023, from action research to AI in the English classroom.</p>
+  </header>
+
+  <Ticker variant="mono" faint scroll="b" repeat={8} text="research. pedagogy. volunteerism. ai in education. international." />
+
+  <div class="log-wrap">
+    <div class="chips" role="group" aria-label="Filter by theme">
+      <button class="chip" type="button" data-filter="all" aria-pressed="true">All<span class="n">{seminars.length}</span></button>
+      {(Object.keys(themes) as Theme[]).map((t) => (
+        <button class="chip" type="button" data-filter={t} aria-pressed="false">{themes[t]}<span class="n">{themeCounts[t]}</span></button>
+      ))}
+    </div>
+
+    <div data-log>
+      {years.map((y) => (
+        <section data-year>
+          <h2 class="log-year">{y}</h2>
+          <ul class="log">
+            {seminars.filter((s) => s.year === y).map((s) => (
+              <li data-theme={s.theme}>
+                <div>
+                  <span class="log__title">{s.title}</span>
+                  {s.sessions && <span class="log__x">×{s.sessions} sessions</span>}
+                </div>
+                <div>
+                  <p class="log__org">{s.org}</p>
+                  <span class="tag log__theme">{themes[s.theme]}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+  </div>
+</Base>

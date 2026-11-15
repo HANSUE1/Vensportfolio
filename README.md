@@ -1,6 +1,7 @@
 # Venelle Matutina · Portfolio
 
-An editorial, animation-driven portfolio ("The Annotated Page") built with Astro, GSAP and Lenis.
+A playful, motion-rich portfolio built with Astro and GSAP: dotted-paper background, giant handwritten
+tickers that move with scroll, a magnetic hero circle, a custom cursor with a spark trail, and case-study pages.
 
 ## Run locally
 
@@ -9,36 +10,53 @@ npm install
 npm run dev        # http://localhost:4321
 ```
 
+If the dev server shows "Outdated Optimize Dep" errors after dependencies change, stop it and run `npm run dev` again.
+
+## Pages
+
+| URL | What it shows |
+|---|---|
+| `/` | Works: hero, tickers, "Currently" panel, case-study grid, "What I've been up to" gallery |
+| `/work/<slug>/` | Case study with sticky contents and reading progress |
+| `/leadership/` | Student leadership roles |
+| `/learning/` | Reading Log of seminars, filterable by theme |
+| `/about/` | Bio, education, skills |
+
 ## Edit content
 
 All text lives in `src/data/`:
 
 | File | What's in it |
 |---|---|
-| `experience.ts` | Profile, teaching case studies, leadership roles, writing |
-| `seminars.ts` | The Reading Log (trainings and seminars) |
-| `skills.ts` | The Toolkit section |
+| `experience.ts` | Profile, case studies (`works`), leadership roles, education |
+| `seminars.ts` | The Reading Log |
+| `skills.ts` | Skills on the About page |
 
-Search for `TODO(Venelle)` to find things that still need her input.
+Search for `TODO(Venelle)` to find things that still need her input. Wrap a phrase in `**double asterisks**`
+inside a summary to make it bold.
 
-**Photo:** save a portrait as `public/portrait.jpg` (4:5 ratio, about 544×680). Until then a monogram shows.
+## Photos (optional)
 
-## Deploy (free, online 24/7)
+Every card shows generated art until a photo is added. Drop files into `public/` and rebuild:
 
-Pushing to `main` builds and publishes the site with GitHub Actions (`.github/workflows/deploy.yml`).
+| File | Where it appears |
+|---|---|
+| `public/portrait.jpg` | Home hero circle and About page |
+| `public/candid.jpg` | Small dashed photo on the About page |
+| `public/work/<slug>.jpg` | A case-study card and its cover, e.g. `work/literacy-tutor.jpg` |
+| `public/work/literacy-tutor-2.jpg`, `-3.jpg` | The two small tiles in the "Currently" panel |
+| `public/work/<leadership-id>.jpg` | Leadership cards, e.g. `work/class-secretary.jpg` |
 
-One-time setup: GitHub repo → **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+Blur or crop out children's faces unless you have consent.
 
-## Structure
+## Motion and accessibility
 
-```
-src/
-  data/          content (edit here)
-  layouts/       page shell, header, footer
-  components/    Pen.astro (red-pen underline)
-  pages/         home + /teaching/[slug] case studies
-  scripts/       motion.ts (GSAP, ScrollTrigger, SplitText, Flip, Lenis)
-  styles/        global.css (design tokens, layout, motion states)
-```
+- Visitors with "reduce motion" turned on get a static page: no loader, tickers, trail or reveals.
+- The custom cursor only appears on desktop with a mouse; touch devices keep the normal behavior.
+- If JavaScript fails to load, a 3-second failsafe reveals all content.
 
-Motion respects `prefers-reduced-motion`, and every section stays readable if JavaScript fails.
+## Deploy
+
+`.github/workflows/deploy.yml` publishes to GitHub Pages on every push to `main`
+(enable it under Settings → Pages → Source: GitHub Actions). For Vercel or Netlify instead, import the repo
+there and delete that workflow file. No code changes are needed.

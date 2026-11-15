@@ -1,0 +1,15 @@
+---
+// Three hand-drawn rules, drawn in from the left when they scroll into view.
+const lines = [
+  'M2 11C140 7 230 13 380 10S640 6 820 11 1080 14 1230 9 1360 10 1398 9',
+  'M2 9C110 12 260 6 420 9S700 13 880 9 1120 6 1270 10 1370 11 1398 10',
+  'M2 10C160 13 300 7 470 10S760 7 940 11 1150 13 1290 8 1372 9 1398 10',
+];
+---
+<div class="dividers" aria-hidden="true">
+  {lines.map((d) => (
+    <div class="dividers__line" data-reveal="line-draw">
+      <svg viewBox="0 0 1400 20" preserveAspectRatio="none"><path d={d} /></svg>
+    </div>
+  ))}
+</div>

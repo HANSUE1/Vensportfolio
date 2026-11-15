@@ -1,0 +1,29 @@
+---
+import type { Cover } from '../data/experience';
+import { hasPublic } from '../lib/rich';
+import { url } from '../lib/url';
+
+interface Props {
+  cover: Cover;
+  /** Optional photo in public/, e.g. "work/literacy-tutor.jpg". Used instead of the art when present. */
+  photo?: string;
+  size?: 'sm' | 'md' | 'lg';
+}
+const { cover, photo, size = 'md' } = Astro.props;
+const usePhoto = photo && hasPublic(photo);
+// Script letters run ~0.6em wide: size the word to fill ~85% of the tile width, capped by its height.
+const fit = Math.min(26, 85 / (Math.max(cover.word.length, 3) * 0.62)).toFixed(1);
+const cap = size === 'lg' ? 34 : size === 'sm' ? 40 : 30;
+---
+{usePhoto ? (
+  <img class="cover cover--photo" src={url(photo)} alt="" loading="lazy" decoding="async" />
+) : (
+  <div
+    class:list={['cover', `cover--${cover.pattern}`, `cover--${size}`]}
+    style={`--cover-bg:${cover.bg};--cover-ink:${cover.ink};--fit:${fit}cqw;--cap:${cap}cqh`}
+    aria-hidden="true"
+  >
+    <span class="cover__word">{cover.word}</span>
+    <span class="cover__note">{cover.note}</span>
+  </div>
+)}

@@ -1,0 +1,133 @@
+---
+import Base from '../layouts/Base.astro';
+import Ticker from '../components/Ticker.astro';
+import Dividers from '../components/Dividers.astro';
+import Star from '../components/Star.astro';
+import Cover from '../components/Cover.astro';
+import { profile, education, works, leadership } from '../data/experience';
+import { totalSessions } from '../data/seminars';
+import { toolkit } from '../data/skills';
+import { hasPublic } from '../lib/rich';
+import { url } from '../lib/url';
+
+const hasPortrait = hasPublic('portrait.jpg');
+const hasCandid = hasPublic('candid.jpg');
+---
+<Base
+  title="About · Venelle Matutina"
+  description="About Venelle Ericka A. Matutina, a third-year English Education student and pre-service teacher at the Philippine Normal University–Manila."
+  current="about"
+  background="paper"
+>
+  <section class="about-hero" data-hero>
+    <p class="page-head__script">Hey there!!</p>
+    <h1 class="display">I am {profile.first} {profile.last}</h1>
+    <svg class="about-hero__art" viewBox="0 0 1200 300" aria-hidden="true">
+      <path d="M0 300V250c120-30 260-40 400-28s300 30 420 18 260-20 380-14v74Z" fill="#fbe0ec" />
+      <g transform="translate(760 70) rotate(-4)">
+        <rect x="0" y="150" width="330" height="44" rx="6" fill="#f7b9d5" />
+        <rect x="18" y="106" width="300" height="44" rx="6" fill="#ece6ff" />
+        <rect x="-6" y="62" width="320" height="44" rx="6" fill="#ffe3d6" />
+        <path d="M30 172h120M50 128h90M24 84h140" stroke="#1a1b1f" stroke-width="3" stroke-linecap="round" />
+        <path d="M70 62c40-60 120-80 190-44l-12 44" fill="#fff" stroke="#1a1b1f" stroke-width="3" stroke-linejoin="round" />
+        <path d="M96 40c30-16 70-22 110-10M104 52c26-10 60-14 92-6" stroke="#1a1b1f" stroke-width="2" stroke-linecap="round" fill="none" />
+      </g>
+      <g transform="translate(560 120) rotate(12)" fill="none" stroke="#1a1b1f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M0 0h150l22 11-22 11H0Z" fill="#fff1c7" />
+        <path d="M150 0v22M18 0v22" />
+      </g>
+      <path d="M0 262c200-8 420 10 640 2s400-14 560-4" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" />
+      <path d="M0 284c240-10 480 8 700 0s340-10 500-2" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" />
+    </svg>
+  </section>
+
+  <Dividers />
+
+  <section class="about" aria-label="About me">
+    <div class="about__photos" data-reveal="fade-up">
+      <div class="about__photo">
+        {hasPortrait ? (
+          <img src={url('portrait.jpg')} alt={`Portrait of ${profile.first} ${profile.last}`} />
+        ) : (
+          <Cover cover={{ word: profile.first, note: 'pnu-manila', bg: '#f7b9d5', ink: '#7a1d48', pattern: 'dots' }} />
+        )}
+      </div>
+      <div class="about__mini">
+        {hasCandid ? (
+          <img src={url('candid.jpg')} alt="" />
+        ) : (
+          <Cover cover={{ word: ':)', note: '', bg: '#ece6ff', ink: '#4b2bd1', pattern: 'none' }} size="sm" />
+        )}
+      </div>
+    </div>
+
+    <div class="about__text" data-reveal="fade-up">
+      <p>
+        I’m {profile.first}, a third-year <strong>{profile.program}</strong> student at the {profile.school}, graduating in {profile.gradYear}. I was a <strong>Dean’s Lister for all three terms</strong> of A.Y. 2024–2025.
+      </p>
+      <p>
+        I’ve taught in very different rooms: <a href={url('work/nstp-pre-service-teacher/')}>kindergarten</a>, a <a href={url('work/field-study-teacher/')}>Grade 6 class</a>, <a href={url('work/cultural-buddy/')}>visiting university students from Taiwan</a>, and now <a href={url('work/literacy-tutor/')}>Key Stage 1 readers</a> as a literacy tutor.
+      </p>
+      <p>
+        Outside the classroom I <a href={url('work/research-and-publication/')}>write for PNU’s international volunteer body</a>, have served as <a href={url('leadership/')}>class president and secretary</a>, and keep learning through <a href={url('learning/')}>{totalSessions} seminar and workshop sessions</a> and counting.
+      </p>
+      <p>Don’t hesitate to reach out at <a href={`mailto:${profile.email}`}>{profile.email}</a>. I’d love to hear from you.</p>
+      <div class="about__actions">
+        <a class="pill" href={`mailto:${profile.email}`}>Email me</a>
+        <button class="pill copy-btn" type="button" data-copy={profile.email}>
+          <span class="copy-btn__idle">Copy email</span><span class="copy-btn__done" aria-live="polite">Copied ✓</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <div style="margin-top: clamp(60px, 9vw, 120px)">
+    <Ticker text="English educator. Creatively curious." scroll="a" repeat={2} />
+    <Ticker text="literacy tutor. storyteller. volunteer." scroll="b" repeat={2} />
+  </div>
+
+  <div class="strip-head">
+    <div class="strip-head__text">
+      <Star />
+      <div>
+        <h2>Education</h2>
+        <p>Where I’ve studied, and the honors along the way.</p>
+      </div>
+    </div>
+    <a class="pill pill--dark" href={url('')}>Check out my works</a>
+  </div>
+  <div class="edu">
+    {education.map((e) => (
+      <div class="edu__card" data-reveal="fade-up">
+        <p class="edu__years">{e.years}</p>
+        <h3 class="edu__school">{e.school}</h3>
+        <p class="edu__detail">{e.detail}</p>
+        <span class="tag tag--purple edu__honor">{e.honor}</span>
+      </div>
+    ))}
+  </div>
+
+  <section class="dark-band" aria-labelledby="toolkit-title">
+    <Ticker variant="mono" scroll="a" repeat={8} text="reading. writing. teaching. volunteering." />
+    <h2 class="visually-hidden" id="toolkit-title">Skills</h2>
+    <div class="toolkit">
+      {toolkit.map((g) => (
+        <div data-reveal="fade-up">
+          <h3>{g.group}</h3>
+          <dl>
+            {g.items.map((it) => (<><dt>{it.name}</dt><dd>{it.body}</dd></>))}
+          </dl>
+        </div>
+      ))}
+    </div>
+    <Ticker variant="mono" scroll="b" repeat={8} text={`${works.length} case studies. ${leadership.length} leadership roles. ${totalSessions} sessions.`} />
+  </section>
+
+  <nav class="page-cloud" aria-label="All pages">
+    <a href={url('')}>All works</a>
+    {works.map((w) => <a href={url(`work/${w.slug}/`)}>{w.role}</a>)}
+    <a href={url('leadership/')}>Leadership</a>
+    <a href={url('learning/')}>Learning</a>
+    <a href={url('about/')} aria-current="page">About Me</a>
+  </nav>
+</Base>
