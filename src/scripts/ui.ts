@@ -9,13 +9,20 @@ export function initMenu() {
   const header = document.querySelector<HTMLElement>('[data-header]');
   const button = document.querySelector<HTMLButtonElement>('[data-menu-button]');
   if (!header || !button) return;
+  const isOpen = () => header.hasAttribute('data-menu-open');
   const set = (open: boolean) => {
     button.setAttribute('aria-expanded', String(open));
     header.toggleAttribute('data-menu-open', open);
   };
-  button.addEventListener('click', () => set(button.getAttribute('aria-expanded') !== 'true'));
+  button.addEventListener('click', () => set(!isOpen()));
   header.querySelectorAll('.site-header__link').forEach((a) => a.addEventListener('click', () => set(false)));
-  document.addEventListener('keydown', (e) => e.key === 'Escape' && set(false));
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape' || !isOpen()) return;
+    set(false);
+    button.focus(); // focus was inside the menu that just closed
+  });
+  // A tap on the page outside the open menu closes it.
+  document.addEventListener('click', (e) => { if (isOpen() && !header.contains(e.target as Node)) set(false); });
   window.matchMedia('(min-width: 62rem)').addEventListener('change', () => set(false));
 }
 

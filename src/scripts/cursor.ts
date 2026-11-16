@@ -119,7 +119,7 @@ export function initCursor() {
 
   // Hide everything when the mouse leaves the window, and drop the trail so it can't reappear.
   const hide = () => { box.setAttribute('data-hidden', ''); trail.length = 0; schedule(); };
-  document.addEventListener('mouseleave', hide);
+  document.documentElement.addEventListener('mouseleave', hide);
   window.addEventListener('blur', hide);
 
   /* ── "View" ring over links ── */

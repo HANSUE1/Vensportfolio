@@ -1,10 +1,20 @@
 // Page motion: intro loader, scroll reveals, scroll-linked tickers, magnetic hero portrait.
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
 
 const root = document.documentElement;
+
+/* ───────── Handwriting: script text is uncovered left to right, like a pen writing it ─────────
+   Negative insets leave room for the script font's swashes, which spill outside the text box.
+   The hidden state matches the CSS in global.css, so nothing flashes before this runs. */
+const UNWRITTEN = 'inset(-30% 100% -60% -12%)';
+const WRITTEN = 'inset(-30% -12% -60% -12%)';
+const writeTime = (el: Element) => gsap.utils.clamp(0.8, 1.8, (el.textContent?.trim().length ?? 12) * 0.055);
+const writeIn = (el: Element, vars: gsap.TweenVars = {}) =>
+  gsap.fromTo(el, { clipPath: UNWRITTEN }, { clipPath: WRITTEN, duration: writeTime(el), ease: 'sine.inOut', ...vars });
 
 /* ───────── Landing intro, then hero entrance ─────────
    1. The name fades in, large and centred.
@@ -15,8 +25,11 @@ const root = document.documentElement;
 export function initLoaderAndHero() {
   const heroIn = () => {
     gsap.fromTo('[data-hero]', { y: 40, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 1.1, stagger: 0.12, ease: 'expo.out', clearProps: 'transform' });
-    // Then the teacher's red-pen marks draw themselves in, one after the other.
-    gsap.to('.mark__svg path', { strokeDashoffset: 0, duration: 0.9, ease: 'power2.inOut', stagger: 0.45, delay: 0.9 });
+    // Inner pages: the script line above the title writes itself in.
+    document.querySelectorAll('.page-head__script').forEach((el) => writeIn(el, { delay: 0.3 }));
+    // Then the teacher's red-pen marks draw themselves in, one after the other (home page only).
+    const marks = document.querySelectorAll('.mark__svg path');
+    if (marks.length) gsap.to(marks, { strokeDashoffset: 0, duration: 0.9, ease: 'power2.inOut', stagger: 0.45, delay: 0.9 });
   };
 
   const ldr = document.querySelector<HTMLElement>('.ldr');
@@ -58,8 +71,9 @@ export function initLoaderAndHero() {
   // Wait for the script font so the name is measured in its final shape.
   Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 1200))]).then(() => {
     active = gsap.timeline({ onComplete: fly })
-      .fromTo(name, { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 1, ease: 'power2.out' })
-      .to({}, { duration: 0.7 }) // hold
+      .set(name, { autoAlpha: 1 })
+      .add(writeIn(name, { duration: writeTime(name) + 0.3 })) // the name is handwritten onto the page
+      .to({}, { duration: 0.5 }) // hold
       .timeScale(speed);
   });
 }
@@ -102,6 +116,25 @@ export function initScrollMotion() {
         },
       );
     });
+  });
+}
+
+/* ───────── Paper plane: loops through "What I've been up to", drawing its trail as you scroll ───────── */
+export function initPaperPlane() {
+  const svg = document.querySelector<SVGSVGElement>('[data-paper-plane]');
+  const trail = svg?.querySelector<SVGPathElement>('.paper-plane__trail');
+  const reveal = svg?.querySelector<SVGPathElement>('.paper-plane__reveal');
+  const plane = svg?.querySelector<SVGGElement>('.paper-plane__plane');
+  if (!svg || !trail || !reveal || !plane) return;
+  // Only where the plane is shown (CSS hides it on phones). Reverting puts it back at rest.
+  gsap.matchMedia().add('(min-width: 48rem)', () => {
+    gsap.timeline({
+      defaults: { ease: 'none' },
+      scrollTrigger: { trigger: svg, start: 'top 85%', end: 'bottom 30%', scrub: 1 },
+    })
+      // Plane and trail both move at constant speed along the path, so the trail ends at the plane.
+      .fromTo(reveal, { strokeDashoffset: 1 }, { strokeDashoffset: 0 }, 0)
+      .to(plane, { motionPath: { path: trail, align: trail, alignOrigin: [0.5, 0.5], autoRotate: true }, immediateRender: true }, 0);
   });
 }
 

@@ -46,7 +46,8 @@ const nav = [
     <meta name="twitter:card" content="summary" />
     <meta name="color-scheme" content="light" />
     <link rel="icon" href={url('favicon.svg')} type="image/svg+xml" />
-    <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
+    {/* The stylesheet is a plain (no-CORS) request; the font files it points to are CORS requests. */}
+    <link rel="preconnect" href="https://api.fontshare.com" />
     <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
     <!-- Loaded without blocking first paint; Montserrat shows until General Sans arrives. -->
     <link rel="stylesheet" href={fontshare} media="print" onload="this.media='all'" />
@@ -120,9 +121,7 @@ const nav = [
     <footer class="site-footer">
       <nav class="site-footer__links" aria-label="Footer">
         <a class="site-footer__link" href={`mailto:${profile.email}`}>Email</a>
-        <a class="site-footer__link" href={url('')}>Works</a>
-        <a class="site-footer__link" href={url('learning/')}>Learning</a>
-        <a class="site-footer__link" href={url('about/')}>About</a>
+        {nav.map((n) => <a class="site-footer__link" href={n.href}>{n.label}</a>)}
       </nav>
       <p class="site-footer__note">© {new Date().getFullYear()} {profile.name} · References available on request</p>
     </footer>

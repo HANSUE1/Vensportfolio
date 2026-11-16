@@ -448,12 +448,9 @@ export function createDotGrid(canvas, options = {}) {
     raf = requestAnimationFrame(frame);
   };
 
-  const locate = (event) => {
-    const rect = canvas.getBoundingClientRect();
-    view.left = rect.left;
-    view.top = rect.top;
-    return [event.clientX - rect.left, event.clientY - rect.top];
-  };
+  // The canvas is position: fixed, so its offset only changes on resize (cached in resize()).
+  // Reading getBoundingClientRect() on every pointermove forced a layout per event while scrolling.
+  const locate = (event) => [event.clientX - view.left, event.clientY - view.top];
 
   const onMove = (event) => {
     if (!settings.mouseInteraction) return;

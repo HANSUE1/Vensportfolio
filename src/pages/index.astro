@@ -6,36 +6,48 @@ import Mark from '../components/Mark.astro';
 import Star from '../components/Star.astro';
 import Cover from '../components/Cover.astro';
 import ProjectCard from '../components/ProjectCard.astro';
-import { profile, works, leadership } from '../data/experience';
+import PaperPlane from '../components/PaperPlane.astro';
+import { profile, works, leadership, type Cover as CoverT, type LeadershipRole, type Work } from '../data/experience';
 import { totalSessions } from '../data/seminars';
 import { getImage } from 'astro:assets';
 import portraitSrc from '../assets/portrait-circle.jpg';
 import { rich } from '../lib/rich';
 import { url } from '../lib/url';
 
-const bySlug = Object.fromEntries(works.map((w) => [w.slug, w]));
-const current = bySlug['literacy-tutor'];
+/** Look up an entry by key, failing the build loudly if the data was renamed. */
+const pick = <T,>(list: T[], key: (item: T) => string, value: string) => {
+  const found = list.find((item) => key(item) === value);
+  if (!found) throw new Error(`index.astro: no entry "${value}" in src/data/experience.ts`);
+  return found;
+};
+const work = (slug: string) => pick(works, (w) => w.slug, slug);
+const role = (id: string) => pick(leadership, (r) => r.id, id);
+
 const workHref = (slug: string) => url(`work/${slug}/`);
-const leadHref = (id: string) => url(`leadership/#${id}`);
+// Shared ProjectCard props for a case study and for a leadership role.
+const workCard = (w: Work) => ({ href: workHref(w.slug), title: w.title, summary: w.summary, tags: w.tags, cover: w.cover, photo: `work/${w.slug}.jpg` });
+const roleCard = (r: LeadershipRole) => ({ href: url(`leadership/#${r.id}`), title: r.title, tags: [r.dates, r.org.split(' · ')[0]], cover: r.cover, photo: `work/${r.id}.jpg` });
+
 // One optimized WebP set, shared by the black-and-white layer and the colour layer.
 const portrait = await getImage({ src: portraitSrc, format: 'webp', widths: [320, 420, 640, 840], sizes: '(min-width: 62rem) 420px, (min-width: 48rem) 320px, 240px' });
 
-const fieldStudy = bySlug['field-study-teacher'];
-const writing = bySlug['research-and-publication'];
-const pair = [bySlug['cultural-buddy'], bySlug['nstp-pre-service-teacher']];
+const current = work('literacy-tutor');
+const fieldStudy = work('field-study-teacher');
+const writing = work('research-and-publication');
+const pair = [work('cultural-buddy'), work('nstp-pre-service-teacher')];
 const leadCells = [
-  { r: leadership[0], s: '--from:1;--to:3;--inset-left:29px' },
-  { r: leadership[1], s: '--from:3;--to:4;--inset-right:30px' },
-  { r: leadership[2], s: '--from:1;--to:2;--inset-left:28px;--inset-right:30px' },
-  { r: leadership[4], s: '--from:2;--to:4;--inset-right:28px' },
+  { r: role('erudite-circle'), s: '--from:1;--to:3;--inset-left:29px' },
+  { r: role('involb-undersecretary'), s: '--from:3;--to:4;--inset-right:30px' },
+  { r: role('class-president-3'), s: '--from:1;--to:2;--inset-left:28px;--inset-right:30px' },
+  { r: role('class-secretary'), s: '--from:2;--to:4;--inset-right:28px' },
 ];
 
-const gallery = [
-  { caption: 'Reading Log', href: url('learning/'), cover: { word: 'Learning', note: `${totalSessions} sessions`, bg: '#ece6ff', ink: '#4b2bd1', pattern: 'lines' as const } },
-  { caption: 'Leadership', href: url('leadership/'), cover: { word: 'Leading', note: `${leadership.length} roles`, bg: '#fbe0ec', ink: '#b0346a', pattern: 'dots' as const } },
-  { caption: 'About Me', href: url('about/'), cover: { word: 'Hi there!', note: 'venelle', bg: '#ffe3d6', ink: '#d2400a', pattern: 'none' as const } },
-  { caption: 'Writing', href: workHref(writing.slug), cover: { word: 'Stories', note: 'involb', bg: '#e2eeff', ink: '#1a3362', pattern: 'grid' as const } },
-  { caption: 'Teaching', href: workHref(current.slug), cover: { word: 'Read.', note: 'key stage 1', bg: '#dff3ee', ink: '#0f6b5c', pattern: 'lines' as const } },
+const gallery: { caption: string; href: string; cover: CoverT }[] = [
+  { caption: 'Reading Log', href: url('learning/'), cover: { word: 'Learning', note: `${totalSessions} sessions`, bg: '#ece6ff', ink: '#4b2bd1', pattern: 'lines' } },
+  { caption: 'Leadership', href: url('leadership/'), cover: { word: 'Leading', note: `${leadership.length} roles`, bg: '#fbe0ec', ink: '#b0346a', pattern: 'dots' } },
+  { caption: 'About Me', href: url('about/'), cover: { word: 'Hi there!', note: 'venelle', bg: '#ffe3d6', ink: '#d2400a', pattern: 'none' } },
+  { caption: 'Writing', href: workHref(writing.slug), cover: { word: 'Stories', note: 'involb', bg: '#e2eeff', ink: '#1a3362', pattern: 'grid' } },
+  { caption: 'Teaching', href: workHref(current.slug), cover: { word: 'Read.', note: 'key stage 1', bg: '#dff3ee', ink: '#0f6b5c', pattern: 'lines' } },
 ];
 ---
 <Base
@@ -114,28 +126,28 @@ const gallery = [
   <div class="works" id="works-grid">
     <div class="works__row" style="--tracks:1.5fr 1fr 1.5fr" data-row="1">
       <div class="works__cell works__cell--wide" style="--from:1;--to:4;--inset-right:30px">
-        <ProjectCard href={workHref(fieldStudy.slug)} title={fieldStudy.title} summary={fieldStudy.summary} tags={fieldStudy.tags} cover={fieldStudy.cover} photo={`work/${fieldStudy.slug}.jpg`} height={350} wide />
+        <ProjectCard {...workCard(fieldStudy)} height={350} wide />
       </div>
     </div>
 
     <div class="works__row" style="--tracks:1.5fr 1fr 1.5fr 1fr" data-row="2">
       {pair.map((w, i) => (
         <div class="works__cell project-card--narrow" style={i === 0 ? '--from:1;--to:3' : '--from:3;--to:5'}>
-          <ProjectCard href={workHref(w.slug)} title={w.title} summary={w.summary} tags={w.tags} cover={w.cover} photo={`work/${w.slug}.jpg`} height={460} />
+          <ProjectCard {...workCard(w)} height={460} />
         </div>
       ))}
     </div>
 
     <div class="works__row" style="--tracks:1.5fr 1fr 1.5fr" data-row="3">
       <div class="works__cell works__cell--wide" style="--from:1;--to:4;--inset-right:30px">
-        <ProjectCard href={workHref(writing.slug)} title={writing.title} summary={writing.summary} tags={writing.tags} cover={writing.cover} photo={`work/${writing.slug}.jpg`} height={350} wide />
+        <ProjectCard {...workCard(writing)} height={350} wide />
       </div>
     </div>
 
     <div class="works__row" style="--tracks:1.5fr 1fr 1.5fr" data-row="4">
       {leadCells.map(({ r, s }) => (
         <div class="works__cell" style={s}>
-          <ProjectCard href={leadHref(r.id)} title={r.title} tags={[r.dates, r.org.split(' · ')[0]]} cover={r.cover} photo={`work/${r.id}.jpg`} height={460} />
+          <ProjectCard {...roleCard(r)} height={460} />
         </div>
       ))}
     </div>
@@ -151,6 +163,7 @@ const gallery = [
 
   <!-- ───── What I've been up to ───── -->
   <section class="explore" aria-labelledby="explore-title">
+    <PaperPlane />
     <div class="explore__intro">
       <svg class="explore__icon" viewBox="0 0 64 74" aria-hidden="true">
         <path d="M6 64V18c9-4 18-4 26 2 8-6 17-6 26-2v46c-9-4-18-4-26 2-8-6-17-6-26-2Z" />

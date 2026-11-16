@@ -86,7 +86,7 @@ src/
   layouts/       Base.astro: head, header, cursor, loader, footer
   components/    Cover, ProjectCard, Ticker, Dividers, Star, PageCloud
   pages/         home, about, leadership, learning, 404, work/[slug] case studies
-  lib/           url() base-path helper, rich() bold-text helper
+  lib/           url() base-path helper, rich() bold-text helper, hasPublic() photo check
   scripts/
     site.ts        entry point: decides what runs (respects reduced motion)
     background.ts  interactive dot grid setup

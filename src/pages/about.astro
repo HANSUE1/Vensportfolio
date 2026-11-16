@@ -72,7 +72,7 @@ import { url } from '../lib/url';
     </div>
   </section>
 
-  <div style="margin-top: clamp(60px, 9vw, 120px)">
+  <div class="about-tickers">
     <Ticker text="English educator. Creatively curious." scroll="a" repeat={2} />
     <Ticker text="literacy tutor. storyteller. volunteer." scroll="b" repeat={2} />
   </div>
@@ -90,6 +90,9 @@ import { url } from '../lib/url';
   <div class="edu">
     {education.map((e) => (
       <div class="edu__card" data-reveal="fade-up">
+        <span class="sticker" aria-hidden="true">
+          <svg viewBox="0 0 48 48" focusable="false"><path d="M24 4 29.6 17.3 44 18.5 33 27.9 36.3 42 24 34.5 11.7 42 15 27.9 4 18.5 18.4 17.3Z" /></svg>
+        </span>
         <p class="edu__years">{e.years}</p>
         <h3 class="edu__school">{e.school}</h3>
         <p class="edu__detail">{e.detail}</p>

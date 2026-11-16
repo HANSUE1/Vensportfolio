@@ -28,8 +28,12 @@ const sections = [
 ];
 let n = 0;
 const num = () => String(++n).padStart(2, '0');
-const words = [work.overview, ...work.did.map((d) => d.body), work.preparation ?? '', work.reflection ?? ''].join(' ').split(/\s+/).length;
+// Reading time from the text actually shown on the page.
+const words = [plain(work.summary), work.overview, ...work.did.map((d) => d.body), work.preparation, work.reflection]
+  .filter(Boolean).join(' ').split(/\s+/).length;
 const minutes = Math.max(1, Math.round(words / 200));
+/** End with a full stop unless the text already has closing punctuation. */
+const sentence = (s: string) => (/[.!?]$/.test(s.trim()) ? s : `${s}.`);
 ---
 <Base title={`${work.role} · Venelle Matutina`} description={plain(work.summary)} current="works">
   <div class="case">
@@ -82,7 +86,7 @@ const minutes = Math.max(1, Math.round(words / 200));
         <section class="case__section" id="preparation" data-reveal="fade-up">
           <p class="case__num"><b>{num()}</b> Preparation</p>
           <h2 class="case__h2">Training behind the work</h2>
-          <p class="case__text">{work.preparation}.</p>
+          <p class="case__text">{sentence(work.preparation)}</p>
         </section>
       )}
 

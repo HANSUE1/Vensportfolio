@@ -29,7 +29,7 @@ const years = [...new Set(seminars.map((s) => s.year))].sort((a, b) => b - a);
     <div data-log>
       {years.map((y) => (
         <section data-year>
-          <h2 class="log-year">{y}</h2>
+          <h2 class="log-year" data-reveal="highlight">{y}</h2>
           <ul class="log">
             {seminars.filter((s) => s.year === y).map((s) => (
               <li data-theme={s.theme}>

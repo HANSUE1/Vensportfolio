@@ -1,0 +1,26 @@
+---
+// A paper airplane that loops through its section as you scroll, leaving a dotted pencil trail
+// (motion.ts → initPaperPlane). Without motion it rests at the end of a fully drawn trail.
+// Drawn in a 1440 × 340 box laid over the top of the parent, which must be position: relative.
+const flight =
+  'M-80 262C30 258 120 222 196 160C262 106 300 44 246 28C192 12 150 72 184 112C214 148 290 136 352 92' +
+  'C470 8 760 30 960 64C1080 84 1150 120 1214 188';
+// Where the plane sits when it isn't flying: the end of the path, nose along the last curve.
+const rest = 'translate(1214 188) rotate(47)';
+---
+<svg class="paper-plane" viewBox="0 0 1440 340" aria-hidden="true" focusable="false" data-paper-plane>
+  <defs>
+    <!-- The dotted trail is revealed through this solid stroke as it draws in. -->
+    <mask id="paper-plane-mask" maskUnits="userSpaceOnUse" x="-100" y="-20" width="1640" height="380">
+      <path class="paper-plane__reveal" d={flight} pathLength="1" />
+    </mask>
+  </defs>
+  <path class="paper-plane__trail" d={flight} mask="url(#paper-plane-mask)" />
+  <g class="paper-plane__plane" transform={rest}>
+    <g transform="translate(-6 -2)">
+      <path class="paper-plane__body" d="M30 2-12 6-4 16Z" />
+      <path class="paper-plane__wing" d="M30 2-20-14-12 6Z" />
+      <path class="paper-plane__fold" d="M30 2-12 6" />
+    </g>
+  </g>
+</svg>
