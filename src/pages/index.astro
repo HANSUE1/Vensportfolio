@@ -176,8 +176,8 @@ const gallery: { caption: string; href: string; cover: CoverT }[] = [
         <p class="explore__label">Want to see more? The links below lead to my leadership work, the seminars that shaped my teaching, and a little more about me.</p>
       </div>
     </div>
-    <div class="gallery">
-      <div class="gallery__track" data-scroll="drift">
+    <div class="gallery" data-gallery tabindex="0" role="region" aria-label="What I’ve been up to: scroll sideways for more">
+      <div class="gallery__track">
         {gallery.map((g) => (
           <figure class="gallery__item">
             <a class="gallery__caption" href={g.href}>{g.caption}</a>
@@ -187,6 +187,14 @@ const gallery: { caption: string; href: string; cover: CoverT }[] = [
           </figure>
         ))}
       </div>
+    </div>
+    <div class="gallery__controls">
+      <button class="gallery__arrow" type="button" data-gallery-prev aria-label="Previous cards" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+      </button>
+      <button class="gallery__arrow" type="button" data-gallery-next aria-label="Next cards">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+      </button>
     </div>
   </section>
 </Base>

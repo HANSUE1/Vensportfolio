@@ -93,13 +93,12 @@ export function initReveal() {
   document.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
 }
 
-/* ───────── Scroll-linked tickers and gallery drift ───────── */
+/* ───────── Scroll-linked tickers ───────── */
 export function initScrollMotion() {
   const vw = (n: number) => () => (window.innerWidth * n) / 100;
   const presets: Record<string, { from: number; to: number; minWidth?: number }> = {
     'ticker-a': { from: 0, to: -45 },
     'ticker-b': { from: -65, to: 0 }, // ends at 0 so no gap opens on the left
-    drift: { from: 0, to: -35, minWidth: 768 },
   };
   const mm = gsap.matchMedia();
   document.querySelectorAll<HTMLElement>('[data-scroll]').forEach((el) => {

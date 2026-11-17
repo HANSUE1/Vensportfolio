@@ -124,3 +124,27 @@ export function initCopy() {
     });
   });
 }
+
+/* ───────── "What I've been up to": arrow buttons step the gallery one card at a time ───────── */
+export function initGallery() {
+  const gallery = document.querySelector<HTMLElement>('[data-gallery]');
+  const prev = document.querySelector<HTMLButtonElement>('[data-gallery-prev]');
+  const next = document.querySelector<HTMLButtonElement>('[data-gallery-next]');
+  if (!gallery || !prev || !next) return;
+  const step = () => {
+    const item = gallery.querySelector<HTMLElement>('.gallery__item');
+    const gap = parseFloat(getComputedStyle(item?.parentElement ?? gallery).columnGap) || 0;
+    return (item?.offsetWidth ?? gallery.clientWidth) + gap;
+  };
+  const go = (dir: 1 | -1) => gallery.scrollBy({ left: dir * step(), behavior: reduced.matches ? 'auto' : 'smooth' });
+  const sync = () => {
+    const max = gallery.scrollWidth - gallery.clientWidth - 2; // 2px slack for sub-pixel widths
+    prev.disabled = gallery.scrollLeft <= 2;
+    next.disabled = gallery.scrollLeft >= max;
+  };
+  prev.addEventListener('click', () => go(-1));
+  next.addEventListener('click', () => go(1));
+  gallery.addEventListener('scroll', sync, { passive: true });
+  window.addEventListener('resize', sync);
+  sync();
+}

@@ -1,7 +1,7 @@
 // Entry point: wires up every page behaviour. Each module owns one job.
 import { initDotGrid } from './background';
 import { initCursor } from './cursor';
-import { initHeaderHide, initMenu, initCaseToc, initLearningFilter, initCopy } from './ui';
+import { initHeaderHide, initMenu, initCaseToc, initLearningFilter, initCopy, initGallery } from './ui';
 import { initLoaderAndHero, initReveal, initScrollMotion, initMagnetic, initPortraitReveal, initPaperPlane } from './motion';
 
 const root = document.documentElement;
@@ -19,7 +19,7 @@ const safe = (init: () => void) => {
   }
 };
 
-[initDotGrid, initPortraitReveal, initMenu, initCopy, initLearningFilter, initCaseToc, initCursor].forEach(safe);
+[initDotGrid, initPortraitReveal, initMenu, initCopy, initLearningFilter, initCaseToc, initGallery, initCursor].forEach(safe);
 
 // Motion runs only when allowed AND the JS-gated CSS is still active. If this script arrived after
 // the 3 s failsafe in Base.astro removed `js`, content is already visible: don't hide it again.
